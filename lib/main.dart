@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'colors.dart'; // Import the Application colors
+import 'pages/home_page.dart';  // Import the HomePage widget
+
 
 void main() {
   runApp(const MyApp());
@@ -17,8 +19,8 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      home: const SplashScreen(),
-      // home: const MyHomePage(title: 'Flutter Demo Home Page'),
+      //home: const SplashScreen(),
+      home: const HomePage(),  // Set the HomePage widget as the home screen
     );
   }
 }
