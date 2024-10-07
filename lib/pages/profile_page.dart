@@ -2,31 +2,56 @@
 
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/widgets/filter_button.dart'; // Update with your actual project name
+import 'package:go_ride_sharing/services/post_service.dart'; // Import your PostService
+import 'package:go_ride_sharing/widgets/post_card.dart'; // Import your PostCard
+import 'package:go_ride_sharing/models/post.dart'; // Import your Post model
 
 class ProfilePage extends StatelessWidget {
   const ProfilePage({super.key});
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      appBar: CustomAppBar(),
+    return Scaffold(
+      appBar: const CustomAppBar(),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
+          const Padding(
             padding: EdgeInsets.all(16.0),
             child: FilterButtonRow(),
           ),
-          Expanded(
-            child: Center(
-              child: Text(
-                'This is the Profile Page',
-                style: TextStyle(fontSize: 24),
-              ),
-            ),
+          const Expanded(
+            child: PostList(),
           ),
         ],
       ),
+    );
+  }
+}
+
+class PostList extends StatelessWidget {
+  const PostList({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<List<Post>>(
+      future: PostService().fetchProfilePosts(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return const Center(child: CircularProgressIndicator());
+        } else if (snapshot.hasError) {
+          return Center(child: Text('Error: ${snapshot.error}'));
+        } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+          return const Center(child: Text('No posts available'));
+        } else {
+          return ListView.builder(
+            itemCount: snapshot.data!.length,
+            itemBuilder: (context, index) {
+              return PostCard(post: snapshot.data![index]);
+            },
+          );
+        }
+      },
     );
   }
 }

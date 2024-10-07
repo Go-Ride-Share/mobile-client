@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:go_ride_sharing/models/post.dart';
+import 'package:go_ride_sharing/services/post_service.dart';
 
 /// Main page for creating a post
 class CreatePostPage extends StatefulWidget {
-  const CreatePostPage({super.key});
+  final Post? post;
+
+  const CreatePostPage({super.key, this.post});
 
   @override
   _CreatePostPageState createState() => _CreatePostPageState();
@@ -18,6 +22,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final _seatsAvailableController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _priceController = TextEditingController();
+  final _startLongitudeController = TextEditingController();
+  final _startLatitudeController = TextEditingController();
+  final _destinationLongitudeController = TextEditingController();
+  final _destinationLatitudeController = TextEditingController();
 
   // Dispose controllers to free up resources when the widget is removed from the widget tree
   @override
@@ -27,6 +35,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
     _seatsAvailableController.dispose();
     _departureDateController.dispose();
     _priceController.dispose();
+    _startLongitudeController.dispose();
+    _startLatitudeController.dispose();
+    _destinationLongitudeController.dispose();
+    _destinationLatitudeController.dispose();
     super.dispose();
   }
 
@@ -42,6 +54,28 @@ class _CreatePostPageState extends State<CreatePostPage> {
       setState(() {
         _departureDateController.text = "${picked.toLocal()}".split(' ')[0];
       });
+    }
+  }
+
+  // Function to create a Post object and call the PostService
+  Future<void> _createPost() async {
+    if (_formKey.currentState!.validate()) {
+      final post = Post(
+        authToken: 'your_auth_token', // Replace with actual auth token
+        startLatitude: double.parse(_startLatitudeController.text),
+        startLongitude: double.parse(_startLongitudeController.text),
+        destinationLatitude: double.parse(_destinationLatitudeController.text),
+        destinationLongitude: double.parse(_destinationLongitudeController.text),
+        description: _postDescriptionController.text,
+        seatsAvailable: int.parse(_seatsAvailableController.text),
+        postName: _postNameController.text,
+        posterName: 'your_poster_name', // Replace with actual poster name
+        departureDate: DateTime.parse(_departureDateController.text),
+        price: double.parse(_priceController.text),
+      );
+
+      await PostService().createPost(post);
+      Navigator.pop(context);
     }
   }
 
@@ -67,27 +101,137 @@ class _CreatePostPageState extends State<CreatePostPage> {
           child: ListView(
             children: [
               // Custom widget for Post Name field
-              PostNameField(controller: _postNameController),
+              CustomTextFormField(
+                controller: _postNameController,
+                labelText: 'Post Name',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a post name';
+                  }
+                  return null;
+                },
+              ),
               // Custom widget for Post Description field
-              PostDescriptionField(controller: _postDescriptionController),
+              CustomTextFormField(
+                controller: _postDescriptionController,
+                labelText: 'Post Description',
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a post description';
+                  }
+                  return null;
+                },
+              ),
               // Custom widget for Seats Available field
-              SeatsAvailableField(controller: _seatsAvailableController),
+              CustomTextFormField(
+                controller: _seatsAvailableController,
+                labelText: 'Seats Available',
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the number of seats available';
+                  }
+                  if (int.tryParse(value) == null) {
+                    return 'Please enter a valid number';
+                  }
+                  return null;
+                },
+              ),
               // Custom widget for Departure Date field
-              DepartureDateField(
+              CustomTextFormField(
                 controller: _departureDateController,
-                selectDate: () => _selectDate(context),
+                labelText: 'Departure Date',
+                readOnly: true,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.calendar_today),
+                  onPressed: () => _selectDate(context),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a departure date';
+                  }
+                  return null;
+                },
               ),
               // Custom widget for Price field
-              PriceField(controller: _priceController),
+              CustomTextFormField(
+                controller: _priceController,
+                labelText: 'Price',
+                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter a price';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid decimal number';
+                  }
+                  return null;
+                },
+              ),
+              // Custom widget for Start Longitude field
+              CustomTextFormField(
+                controller: _startLongitudeController,
+                labelText: 'Start Longitude',
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the start longitude';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid decimal number';
+                  }
+                  return null;
+                },
+              ),
+              // Custom widget for Start Latitude field
+              CustomTextFormField(
+                controller: _startLatitudeController,
+                labelText: 'Start Latitude',
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the start latitude';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid decimal number';
+                  }
+                  return null;
+                },
+              ),
+              // Custom widget for Destination Longitude field
+              CustomTextFormField(
+                controller: _destinationLongitudeController,
+                labelText: 'Destination Longitude',
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the destination longitude';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid decimal number';
+                  }
+                  return null;
+                },
+              ),
+              // Custom widget for Destination Latitude field
+              CustomTextFormField(
+                controller: _destinationLatitudeController,
+                labelText: 'Destination Latitude',
+                keyboardType: TextInputType.number,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter the destination latitude';
+                  }
+                  if (double.tryParse(value) == null) {
+                    return 'Please enter a valid decimal number';
+                  }
+                  return null;
+                },
+              ),
               const SizedBox(height: 20),
               // Button to submit the form
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    // Process data if the form is valid
-                    Navigator.pop(context);
-                  }
-                },
+                onPressed: _createPost,
                 child: const Text('Post'),
               ),
             ],
@@ -98,123 +242,36 @@ class _CreatePostPageState extends State<CreatePostPage> {
   }
 }
 
-/// TextFormField for Post Name
-class PostNameField extends StatelessWidget {
+/// Custom reusable TextFormField widget
+class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
+  final String labelText;
+  final TextInputType? keyboardType;
+  final bool readOnly;
+  final Widget? suffixIcon;
+  final String? Function(String?)? validator;
 
-  const PostNameField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: 'Post Name'),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a post name';
-        }
-        return null;
-      },
-    );
-  }
-}
-
-/// TextFormField for Post Description
-class PostDescriptionField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const PostDescriptionField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: 'Post Description'),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a post description';
-        }
-        return null;
-      },
-    );
-  }
-}
-
-/// TextFormField for Seats Available
-class SeatsAvailableField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const SeatsAvailableField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: 'Seats Available'),
-      keyboardType: TextInputType.number,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter the number of seats available';
-        }
-        if (int.tryParse(value) == null) {
-          return 'Please enter a valid number';
-        }
-        return null;
-      },
-    );
-  }
-}
-
-/// TextFormField for Departure Date
-class DepartureDateField extends StatelessWidget {
-  final TextEditingController controller;
-  final VoidCallback selectDate;
-
-  const DepartureDateField({super.key, required this.controller, required this.selectDate});
+  const CustomTextFormField({
+    super.key,
+    required this.controller,
+    required this.labelText,
+    this.keyboardType,
+    this.readOnly = false,
+    this.suffixIcon,
+    this.validator,
+  });
 
   @override
   Widget build(BuildContext context) {
     return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        labelText: 'Departure Date',
-        suffixIcon: IconButton(
-          icon: const Icon(Icons.calendar_today),
-          onPressed: selectDate,
-        ),
+        labelText: labelText,
+        suffixIcon: suffixIcon,
       ),
-      readOnly: true,
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a departure date';
-        }
-        return null;
-      },
-    );
-  }
-}
-
-/// TextFormField for Price
-class PriceField extends StatelessWidget {
-  final TextEditingController controller;
-
-  const PriceField({super.key, required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    return TextFormField(
-      controller: controller,
-      decoration: const InputDecoration(labelText: 'Price'),
-      keyboardType: const TextInputType.numberWithOptions(decimal: true),
-      validator: (value) {
-        if (value == null || value.isEmpty) {
-          return 'Please enter a price';
-        }
-        if (double.tryParse(value) == null) {
-          return 'Please enter a valid decimal number';
-        }
-        return null;
-      },
+      keyboardType: keyboardType,
+      readOnly: readOnly,
+      validator: validator,
     );
   }
 }
