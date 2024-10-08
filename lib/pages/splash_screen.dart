@@ -14,7 +14,8 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 4), () {
-      Navigator.of(context).pushReplacementNamed('/home'); // Replace '/home' with your target route
+      //check if i am signed in using caches and tokens
+      Navigator.of(context).pushReplacementNamed('/sign_in_page'); // Replace '/home' with your target route
     });
   }
 
