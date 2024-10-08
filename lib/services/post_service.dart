@@ -21,7 +21,7 @@ class PostService {
         seatsAvailable: 3,
         postName: 'SF to LA Ride',
         posterName: 'John Doe',
-        departureDate: DateTime.now().add(Duration(days: 1)),
+        departureDate: DateTime(2024, 10, 8), // After Oct 7 2024
         price: 50.0,
       ),
       Post(
@@ -34,7 +34,7 @@ class PostService {
         seatsAvailable: 2,
         postName: 'NYC to Boston Ride',
         posterName: 'Jane Smith',
-        departureDate: DateTime.now().add(Duration(days: 2)),
+        departureDate: DateTime(2024, 10, 9), // After Oct 7 2024
         price: 30.0,
       ),
       Post(
@@ -47,7 +47,7 @@ class PostService {
         seatsAvailable: 4,
         postName: 'LA to Vegas Ride',
         posterName: 'Alice Johnson',
-        departureDate: DateTime.now().add(Duration(days: 3)),
+        departureDate: DateTime(2024, 10, 7), // On Oct 7 2024
         price: 40.0,
       ),
       Post(
@@ -60,7 +60,7 @@ class PostService {
         seatsAvailable: 1,
         postName: 'Seattle to Portland Ride',
         posterName: 'Bob Brown',
-        departureDate: DateTime.now().add(Duration(days: 4)),
+        departureDate: DateTime(2024, 10, 6), // Before Oct 7 2024
         price: 25.0,
       ),
     ];

@@ -6,8 +6,27 @@ import 'package:go_ride_sharing/services/post_service.dart'; // Import your Post
 import 'package:go_ride_sharing/widgets/post_card.dart'; // Import your PostCard
 import 'package:go_ride_sharing/models/post.dart'; // Import your Post model
 
-class ProfilePage extends StatelessWidget {
+enum FilterType { today, future, past }
+
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  Set<FilterType> _selectedFilters = {FilterType.today};
+
+  void _updateFilter(FilterType filter) {
+    setState(() {
+      if (_selectedFilters.contains(filter)) {
+        _selectedFilters.remove(filter);
+      } else {
+        _selectedFilters.add(filter);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -16,12 +35,15 @@ class ProfilePage extends StatelessWidget {
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Padding(
-            padding: EdgeInsets.all(16.0),
-            child: FilterButtonRow(),
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: FilterButtonRow(
+              selectedFilters: _selectedFilters,
+              onFilterChanged: _updateFilter,
+            ),
           ),
-          const Expanded(
-            child: PostList(),
+          Expanded(
+            child: PostList(filters: _selectedFilters),
           ),
         ],
       ),
@@ -30,7 +52,9 @@ class ProfilePage extends StatelessWidget {
 }
 
 class PostList extends StatelessWidget {
-  const PostList({super.key});
+  final Set<FilterType> filters;
+
+  const PostList({super.key, required this.filters});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +68,25 @@ class PostList extends StatelessWidget {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No posts available'));
         } else {
+          final now = DateTime.now();
+            final filteredPosts = snapshot.data!.where((post) {
+            final departureDate = DateTime(post.departureDate.year, post.departureDate.month, post.departureDate.day);
+            final today = DateTime(now.year, now.month, now.day);
+            return filters.any((filter) {
+              switch (filter) {
+              case FilterType.today:
+                return departureDate == today;
+              case FilterType.future:
+                return departureDate.isAfter(today);
+              case FilterType.past:
+                return departureDate.isBefore(today);
+              }
+            });
+            }).toList();
           return ListView.builder(
-            itemCount: snapshot.data!.length,
+            itemCount: filteredPosts.length,
             itemBuilder: (context, index) {
-              return PostCard(post: snapshot.data![index]);
+              return PostCard(post: filteredPosts[index]);
             },
           );
         }
@@ -57,7 +96,14 @@ class PostList extends StatelessWidget {
 }
 
 class FilterButtonRow extends StatelessWidget {
-  const FilterButtonRow({super.key});
+  final Set<FilterType> selectedFilters;
+  final ValueChanged<FilterType> onFilterChanged;
+
+  const FilterButtonRow({
+    super.key,
+    required this.selectedFilters,
+    required this.onFilterChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,24 +112,20 @@ class FilterButtonRow extends StatelessWidget {
       children: [
         FilterButton(
           label: 'Today',
-          onPressed: () {
-            // Add your logic here
-            print('Today printing out');
-          },
+          onPressed: () => onFilterChanged(FilterType.today),
+          isSelected: selectedFilters.contains(FilterType.today),
         ),
         const SizedBox(width: 8),
         FilterButton(
           label: 'Future',
-          onPressed: () {
-            // Add your logic here
-          },
+          onPressed: () => onFilterChanged(FilterType.future),
+          isSelected: selectedFilters.contains(FilterType.future),
         ),
         const SizedBox(width: 8),
         FilterButton(
           label: 'Past',
-          onPressed: () {
-            // Add your logic here
-          },
+          onPressed: () => onFilterChanged(FilterType.past),
+          isSelected: selectedFilters.contains(FilterType.past),
         ),
       ],
     );
