@@ -8,7 +8,7 @@ class Post {
   final String description;
   final int seatsAvailable;
   final String postName;
-  final String posterName;
+  final String? posterName;
   final DateTime departureDate;
   final double price;
 
@@ -22,7 +22,7 @@ class Post {
     required this.description,
     required this.seatsAvailable,
     required this.postName,
-    required this.posterName,
+    this.posterName,
     required this.departureDate,
     required this.price,
   });

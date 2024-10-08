@@ -35,27 +35,27 @@ class _FilterButtonState extends State<FilterButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 30.0, // Set the desired height here
+      height: 30.0,
       child: OutlinedButton(
         onPressed: _handlePress,
         style: ButtonStyle(
-          side: MaterialStateProperty.all(
+          side: WidgetStateProperty.all(
             BorderSide(
               color: isToggled ? Colors.blue : const Color(0xFF9C9C9C),
-              width: 2.0, // Increase the border weight here
+              width: 2.0,
             ),
           ),
-          foregroundColor: MaterialStateProperty.all(
+          foregroundColor: WidgetStateProperty.all(
             isToggled ? Colors.white : const Color(0xFF9C9C9C),
           ),
-          backgroundColor: MaterialStateProperty.all(
+          backgroundColor: WidgetStateProperty.all(
             isToggled ? Colors.blue : Colors.transparent,
           ),
         ),
         child: Text(
           widget.label,
           style: const TextStyle(
-            fontWeight: FontWeight.bold, // Increase the text weight here
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

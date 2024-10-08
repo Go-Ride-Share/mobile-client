@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 
-/// Main page for creating a post
 class PostFormPage extends StatefulWidget {
   final Post? post;
 
@@ -13,10 +12,9 @@ class PostFormPage extends StatefulWidget {
 }
 
 class _PostFormPageState extends State<PostFormPage> {
-  // Form key to identify the form and validate it
   final _formKey = GlobalKey<FormState>();
 
-  // Controllers for the form fields
+  // Controllers for form fields
   final _postNameController = TextEditingController();
   final _postDescriptionController = TextEditingController();
   final _seatsAvailableController = TextEditingController();
@@ -30,6 +28,7 @@ class _PostFormPageState extends State<PostFormPage> {
   @override
   void initState() {
     super.initState();
+    // If a post is passed, populate the form fields with its data
     if (widget.post != null) {
       _postNameController.text = widget.post!.postName;
       _postDescriptionController.text = widget.post!.description;
@@ -43,9 +42,9 @@ class _PostFormPageState extends State<PostFormPage> {
     }
   }
 
-  // Dispose controllers to free up resources when the widget is removed from the widget tree
   @override
   void dispose() {
+    // Dispose controllers to free up resources
     _postNameController.dispose();
     _postDescriptionController.dispose();
     _seatsAvailableController.dispose();
@@ -58,7 +57,7 @@ class _PostFormPageState extends State<PostFormPage> {
     super.dispose();
   }
 
-  // Function to show date picker and set the selected date to the controller
+  // Function to select a date using a date picker
   Future<void> _selectDate(BuildContext context) async {
     final DateTime? picked = await showDatePicker(
       context: context,
@@ -73,7 +72,7 @@ class _PostFormPageState extends State<PostFormPage> {
     }
   }
 
-  // Function to create or update a Post object and call the PostService
+  // Function to submit the post form
   Future<void> _submitPost() async {
     if (_formKey.currentState!.validate()) {
       final post = Post(
@@ -84,11 +83,11 @@ class _PostFormPageState extends State<PostFormPage> {
         description: _postDescriptionController.text,
         seatsAvailable: int.parse(_seatsAvailableController.text),
         postName: _postNameController.text,
-        posterName: 'your_poster_name', // Replace with actual poster name
         departureDate: DateTime.parse(_departureDateController.text),
         price: double.parse(_priceController.text),
       );
 
+      // Create or update the post based on whether a post was passed
       if (widget.post == null) {
         await PostService().createPost(post);
       } else {
@@ -98,7 +97,7 @@ class _PostFormPageState extends State<PostFormPage> {
     }
   }
 
-  // Function to delete a Post object and call the PostService
+  // Function to delete the post
   Future<void> _deletePost() async {
     if (widget.post != null) {
       await PostService().deletePost(widget.post!.postId);
@@ -114,7 +113,6 @@ class _PostFormPageState extends State<PostFormPage> {
       appBar: AppBar(
         title: Text(title),
         actions: [
-          // Close button to navigate back to the previous screen
           IconButton(
             icon: const Icon(Icons.close),
             onPressed: () {
@@ -129,7 +127,6 @@ class _PostFormPageState extends State<PostFormPage> {
           key: _formKey,
           child: ListView(
             children: [
-              // Custom widget for Post Name field
               CustomTextFormField(
                 controller: _postNameController,
                 labelText: 'Post Name',
@@ -140,7 +137,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Post Description field
               CustomTextFormField(
                 controller: _postDescriptionController,
                 labelText: 'Post Description',
@@ -151,7 +147,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Seats Available field
               CustomTextFormField(
                 controller: _seatsAvailableController,
                 labelText: 'Seats Available',
@@ -166,7 +161,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Departure Date field
               CustomTextFormField(
                 controller: _departureDateController,
                 labelText: 'Departure Date',
@@ -182,7 +176,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Price field
               CustomTextFormField(
                 controller: _priceController,
                 labelText: 'Price',
@@ -197,7 +190,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Start Longitude field
               CustomTextFormField(
                 controller: _startLongitudeController,
                 labelText: 'Start Longitude',
@@ -212,7 +204,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Start Latitude field
               CustomTextFormField(
                 controller: _startLatitudeController,
                 labelText: 'Start Latitude',
@@ -227,7 +218,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Destination Longitude field
               CustomTextFormField(
                 controller: _destinationLongitudeController,
                 labelText: 'Destination Longitude',
@@ -242,7 +232,6 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              // Custom widget for Destination Latitude field
               CustomTextFormField(
                 controller: _destinationLatitudeController,
                 labelText: 'Destination Latitude',
@@ -258,12 +247,10 @@ class _PostFormPageState extends State<PostFormPage> {
                 },
               ),
               const SizedBox(height: 20),
-              // Button to submit the form
               ElevatedButton(
                 onPressed: _submitPost,
                 child: Text(widget.post == null ? 'Post' : 'Update'),
               ),
-              // Delete button to delete the post
               if (widget.post != null)
                 ElevatedButton(
                   onPressed: _deletePost,
@@ -280,7 +267,6 @@ class _PostFormPageState extends State<PostFormPage> {
   }
 }
 
-/// Custom reusable TextFormField widget
 class CustomTextFormField extends StatelessWidget {
   final TextEditingController controller;
   final String labelText;
