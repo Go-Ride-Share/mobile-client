@@ -4,13 +4,19 @@ A new Flutter project.
 
 ## Getting Started
 
-This project is a starting point for a Flutter application.
+### To run the project
+- Clone the repository
+- Run `flutter pub get` to install the dependencies
+- Ensure you have an emulator or a device installed
+    - Launch the emulator or connect the device
+    - (For VSCode, press ```Ctrl + Shift + P``` and select `Flutter: Select Device`). Select the device you want to run the project on.
+- Run `flutter run` in terminal to run the project
 
-A few resources to get you started if this is your first Flutter project:
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+### Dependencies
+- Mention all the dependencies used in the project
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+
+### To add more dependencies
+- Add the dependency in the `pubspec.yaml` file
+- Run `flutter pub get` to install the dependency

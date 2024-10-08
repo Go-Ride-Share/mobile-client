@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'colors.dart'; // Import the Application colors
-import 'pages/home_page.dart';  // Import the HomePage widget
-
+import 'pages/splash_screen.dart';  // Import the SplashScreen widget
+import 'pages/sign_in_page.dart';  // Import the SignInPage widget
 
 void main() {
   runApp(const MyApp());
@@ -19,22 +18,11 @@ class MyApp extends StatelessWidget {
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         useMaterial3: true,
       ),
-      //home: const SplashScreen(),
-      home: const HomePage(),  // Set the HomePage widget as the home screen
-    );
-  }
-}
-
-class SplashScreen extends StatelessWidget {
-  const SplashScreen({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: notYellow,
-      body: Center(
-        child: Image.asset('assets/images/LogoNotBlack.png'), // Ensure you have a logo image at this path
-      ),
+      initialRoute: '/',
+      routes: {
+        '/': (context) => const SplashScreen(),
+        '/sign_in_page': (context) => const SignInPage(),
+      },
     );
   }
 }
