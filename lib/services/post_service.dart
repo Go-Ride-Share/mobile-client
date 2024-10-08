@@ -12,6 +12,7 @@ class PostService {
     // Return a list of fake posts
     return [
       Post(
+        postId: '1',
         authToken: 'token1',
         startLatitude: 37.7749,
         startLongitude: -122.4194,
@@ -25,6 +26,7 @@ class PostService {
         price: 50.0,
       ),
       Post(
+        postId: '2',
         authToken: 'token2',
         startLatitude: 40.7128,
         startLongitude: -74.0060,
@@ -38,6 +40,7 @@ class PostService {
         price: 30.0,
       ),
       Post(
+        postId: '3',
         authToken: 'token3',
         startLatitude: 34.0522,
         startLongitude: -118.2437,
@@ -51,6 +54,7 @@ class PostService {
         price: 40.0,
       ),
       Post(
+        postId: '4',
         authToken: 'token4',
         startLatitude: 47.6062,
         startLongitude: -122.3321,
@@ -67,6 +71,7 @@ class PostService {
   }
 
   Future<void> createPost(Post post) async {
+    print('Post ID: ${post.postId}');
     print('Auth Token: ${post.authToken}');
     print('Start Latitude: ${post.startLatitude}');
     print('Start Longitude: ${post.startLongitude}');
@@ -81,7 +86,24 @@ class PostService {
     // Fill in later
   }
 
-  Future<void> deletePost(Post post) async {
+  Future<void> updatePost(Post post) async {
+    print('Post ID: ${post.postId}');
+    print('Auth Token: ${post.authToken}');
+    print('Start Latitude: ${post.startLatitude}');
+    print('Start Longitude: ${post.startLongitude}');
+    print('Destination Latitude: ${post.destinationLatitude}');
+    print('Destination Longitude: ${post.destinationLongitude}');
+    print('Description: ${post.description}');
+    print('Seats Available: ${post.seatsAvailable}');
+    print('Post Name: ${post.postName}');
+    print('Poster Name: ${post.posterName}');
+    print('Departure Date: ${post.departureDate}');
+    print('Price: ${post.price}');
+    // Fill in later
+  }
+
+  Future<void> deletePost(String? postId) async {
+    print('Deleting post with ID: $postId');
     // Fill in later
   }
 }

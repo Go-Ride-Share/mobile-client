@@ -2,7 +2,7 @@
 
 import 'package:flutter/material.dart';
 import 'profile_page.dart';  // Import the ProfilePage here
-import 'create_post_page.dart';  // Import the CreatePostPage here
+import 'post_form_page.dart';  // Import the CreatePostPage here
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -26,7 +26,7 @@ class _HomePageState extends State<HomePage> {
       // Show the CreatePostPage as a bottom sheet
       showModalBottomSheet(
         context: context,
-        builder: (context) => const CreatePostPage(),
+        builder: (context) => const PostFormPage(),
       );
     } else {
       setState(() {

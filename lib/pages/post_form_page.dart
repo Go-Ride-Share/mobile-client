@@ -3,16 +3,16 @@ import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 
 /// Main page for creating a post
-class CreatePostPage extends StatefulWidget {
+class PostFormPage extends StatefulWidget {
   final Post? post;
 
-  const CreatePostPage({super.key, this.post});
+  const PostFormPage({super.key, this.post});
 
   @override
-  _CreatePostPageState createState() => _CreatePostPageState();
+  _PostFormPageState createState() => _PostFormPageState();
 }
 
-class _CreatePostPageState extends State<CreatePostPage> {
+class _PostFormPageState extends State<PostFormPage> {
   // Form key to identify the form and validate it
   final _formKey = GlobalKey<FormState>();
 
@@ -26,6 +26,22 @@ class _CreatePostPageState extends State<CreatePostPage> {
   final _startLatitudeController = TextEditingController();
   final _destinationLongitudeController = TextEditingController();
   final _destinationLatitudeController = TextEditingController();
+
+  @override
+  void initState() {
+    super.initState();
+    if (widget.post != null) {
+      _postNameController.text = widget.post!.postName;
+      _postDescriptionController.text = widget.post!.description;
+      _seatsAvailableController.text = widget.post!.seatsAvailable.toString();
+      _departureDateController.text = widget.post!.departureDate.toLocal().toString().split(' ')[0];
+      _priceController.text = widget.post!.price.toString();
+      _startLongitudeController.text = widget.post!.startLongitude.toString();
+      _startLatitudeController.text = widget.post!.startLatitude.toString();
+      _destinationLongitudeController.text = widget.post!.destinationLongitude.toString();
+      _destinationLatitudeController.text = widget.post!.destinationLatitude.toString();
+    }
+  }
 
   // Dispose controllers to free up resources when the widget is removed from the widget tree
   @override
@@ -57,11 +73,10 @@ class _CreatePostPageState extends State<CreatePostPage> {
     }
   }
 
-  // Function to create a Post object and call the PostService
-  Future<void> _createPost() async {
+  // Function to create or update a Post object and call the PostService
+  Future<void> _submitPost() async {
     if (_formKey.currentState!.validate()) {
       final post = Post(
-        authToken: 'your_auth_token', // Replace with actual auth token
         startLatitude: double.parse(_startLatitudeController.text),
         startLongitude: double.parse(_startLongitudeController.text),
         destinationLatitude: double.parse(_destinationLatitudeController.text),
@@ -74,16 +89,30 @@ class _CreatePostPageState extends State<CreatePostPage> {
         price: double.parse(_priceController.text),
       );
 
-      await PostService().createPost(post);
+      if (widget.post == null) {
+        await PostService().createPost(post);
+      } else {
+        await PostService().updatePost(post);
+      }
+      Navigator.pop(context);
+    }
+  }
+
+  // Function to delete a Post object and call the PostService
+  Future<void> _deletePost() async {
+    if (widget.post != null) {
+      await PostService().deletePost(widget.post!.postId);
       Navigator.pop(context);
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    final title = widget.post == null ? 'Create Post' : 'Update Post';
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Post'),
+        title: Text(title),
         actions: [
           // Close button to navigate back to the previous screen
           IconButton(
@@ -231,9 +260,18 @@ class _CreatePostPageState extends State<CreatePostPage> {
               const SizedBox(height: 20),
               // Button to submit the form
               ElevatedButton(
-                onPressed: _createPost,
-                child: const Text('Post'),
+                onPressed: _submitPost,
+                child: Text(widget.post == null ? 'Post' : 'Update'),
               ),
+              // Delete button to delete the post
+              if (widget.post != null)
+                ElevatedButton(
+                  onPressed: _deletePost,
+                  child: const Text('Delete'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.red,
+                  ),
+                ),
             ],
           ),
         ),

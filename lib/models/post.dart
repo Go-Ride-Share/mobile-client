@@ -1,5 +1,6 @@
 class Post {
-  final String authToken;
+  final String? postId;
+  final String? authToken;
   final double startLatitude;
   final double startLongitude;
   final double destinationLatitude;
@@ -12,7 +13,8 @@ class Post {
   final double price;
 
   Post({
-    required this.authToken,
+    this.postId,
+    this.authToken,
     required this.startLatitude,
     required this.startLongitude,
     required this.destinationLatitude,
@@ -28,6 +30,7 @@ class Post {
   // Factory constructor to create a Post from JSON
   factory Post.fromJson(Map<String, dynamic> json) {
     return Post(
+      postId: json['postId'],
       authToken: json['authToken'],
       startLatitude: json['startLatitude'],
       startLongitude: json['startLongitude'],
