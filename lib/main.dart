@@ -15,6 +15,7 @@ class MyApp extends StatelessWidget {
 
   Future<bool> _checkToken() async {
     String? token = await _cachingService.getData(ENV.CACHE_TOKEN_KEY);
+    print('Asit Token: $token'); 
     return (token != null);
   }
 

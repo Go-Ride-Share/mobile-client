@@ -2,6 +2,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'caching_service.dart';
 import '../constants.dart';
+import 'package:crypto/crypto.dart';
 class AuthService {
 
 static final Map<String, String> _defaultHeaders = {
@@ -31,7 +32,7 @@ static final Map<String, String> RESPONSE_MSG = {
       var hashedPassword = password; //sha256.convert(bytes).toString();
 
       // Send the email and hashed password to the account manager URL
-      var url = Uri.parse('$ENV.API_AUTH_URL/api/VerifyLoginCredentials');
+      var url = Uri.parse('${ENV.API_AUTH_URL}/api/VerifyLoginCredentials');
 
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
 
