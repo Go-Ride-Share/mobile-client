@@ -7,9 +7,14 @@ class ENV {
     static const String API_BASE_URL_PROD = "https://grs-logic.azurewebsites.net";
     static const String API_BASE_URL = "https://grs-logic-dev.azurewebsites.net";
 
+    // For DB:
+    static const String API_DB_URL_PROD = "https://grs-logic.azurewebsites.net";
+    static const String API_DB_URL = "https://grs-logic-dev.azurewebsites.net";
+
     static const int TOKEN_EXPIRATION_DURATION = 6; //in hours
 
-    static const String CACHE_TOKEN_KEY = "bearer_token";
+    static const String CACHE_BEARER_TOKEN_KEY = "bearer_token";
+    static const String CACHE_DB_TOKEN_KEY = "db_token";
     static const String CACHE_USER_ID_KEY = "user_id";
 
     // Sprint 1 - caching only the username for use within the App, will create complex states in the future

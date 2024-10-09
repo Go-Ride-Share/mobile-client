@@ -119,7 +119,7 @@ class SignUpPageState extends State<SignUpPage> {
                 onPressed: () async {
                 if(_formKey.currentState!.validate()) {
                   // bundle up all the data in a Map<String, dynamic>
-                  final Map<String, dynamic> form_data = {
+                  final Map<String, dynamic> formData = {
                     'name': _nameController.text,
                     'email': _emailController.text,
                     'password': _passwordController.text,
@@ -127,7 +127,7 @@ class SignUpPageState extends State<SignUpPage> {
                     'phone': _phoneController.text,
                     'image': _image,
                   };
-                  final String response = await AuthService.sign_up(form_data);
+                  final String response = await AuthService.signUp(formData);
                   if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
                     Navigator.pushNamed(context, '/home');
                   } else {
