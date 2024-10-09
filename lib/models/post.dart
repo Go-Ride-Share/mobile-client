@@ -1,16 +1,16 @@
 class Post {
-  final String? postId;
-  final String? authToken;
-  final double startLatitude;
-  final double startLongitude;
-  final double destinationLatitude;
-  final double destinationLongitude;
-  final String description;
-  final int seatsAvailable;
-  final String postName;
-  final String? posterName;
-  final DateTime departureDate;
-  final double price;
+  String? postId;
+  String? authToken;
+  double startLatitude;
+  double startLongitude;
+  double destinationLatitude;
+  double destinationLongitude;
+  String description;
+  int seatsAvailable;
+  String postName;
+  String? posterName;
+  DateTime departureDate;
+  double price;
 
   Post({
     this.postId,
@@ -32,16 +32,17 @@ class Post {
     return Post(
       postId: json['postId'],
       authToken: json['authToken'],
-      startLatitude: json['startLatitude'],
-      startLongitude: json['startLongitude'],
-      destinationLatitude: json['destinationLatitude'],
-      destinationLongitude: json['destinationLongitude'],
+      startLatitude: (json['originLat'] as num).toDouble(),
+      startLongitude: (json['originLng'] as num).toDouble(),
+      destinationLatitude: (json['destinationLat'] as num).toDouble(),
+      destinationLongitude: (json['destinationLng'] as num).toDouble(),
       description: json['description'],
       seatsAvailable: json['seatsAvailable'],
-      postName: json['postName'],
-      posterName: json['posterName'],
-      departureDate: DateTime.parse(json['departureDate']),
-      price: json['price'],
+      postName: json['name'],
+      departureDate: json['departureDate'] != null && json['departureDate'].isNotEmpty
+          ? DateTime.parse(json['departureDate'])
+          : DateTime.now(), // Default to current date if not provided
+      price: (json['price'] as num).toDouble(),
     );
   }
 }

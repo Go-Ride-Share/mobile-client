@@ -97,14 +97,6 @@ class _PostFormPageState extends State<PostFormPage> {
     }
   }
 
-  // Function to delete the post
-  Future<void> _deletePost() async {
-    if (widget.post != null) {
-      await PostService().deletePost(widget.post!.postId);
-      Navigator.pop(context);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     final title = widget.post == null ? 'Create Post' : 'Update Post';
@@ -251,14 +243,6 @@ class _PostFormPageState extends State<PostFormPage> {
                 onPressed: _submitPost,
                 child: Text(widget.post == null ? 'Post' : 'Update'),
               ),
-              if (widget.post != null)
-                ElevatedButton(
-                  onPressed: _deletePost,
-                  child: const Text('Delete'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.red,
-                  ),
-                ),
             ],
           ),
         ),
