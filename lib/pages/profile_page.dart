@@ -179,8 +179,7 @@ class WelcomeHeader extends StatelessWidget {
         text: const TextSpan(
           children: [
             TextSpan(
-              text: 'Welcome ',
-              style: TextStyle(fontWeight: FontWeight.bold),
+              text: 'Welcome back, '
             ),
             TextSpan(
               text: 'John!',
