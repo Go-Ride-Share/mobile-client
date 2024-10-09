@@ -104,15 +104,14 @@ class _PostFormPageState extends State<PostFormPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text(title),
-        // actions: [
-        //   IconButton(
-        //     icon: const Icon(Icons.close),
-        //     // Remove this for Sprint 1 - add back in Sprint 2
-        //     // onPressed: () {
-        //     //   Navigator.pop(context);
-        //     // },
-        //   ),
-        // ],
+        actions: [
+          IconButton(
+            icon: Icon(Icons.close),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

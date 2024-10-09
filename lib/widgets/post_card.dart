@@ -10,12 +10,12 @@ class PostCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
-        );
-      },
+      // onTap: () {
+      //   // Navigator.push(
+      //   //   context,
+      //   //   MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
+      //   );
+      // },
       child: Card(
         color: Color(0xFFF3F7F9),
         shape: RoundedRectangleBorder(
