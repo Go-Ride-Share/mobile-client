@@ -15,6 +15,10 @@ class SignInPageState extends State<SignInPage> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  
+  // Add error handling for sign in
+  bool _error = false;
+  String _errorMessage = '';
 
   @override
   Widget build(BuildContext context) {
@@ -40,20 +44,29 @@ class SignInPageState extends State<SignInPage> {
               obscureText: true,
               validator: (value) => ValidationService.validatePassword(value),
             ),
-            SizedBox(height: 20),
+            if (_error)
+              Padding(
+              padding: const EdgeInsets.only(top: 20.0),
+              child: Text(
+                _errorMessage,
+                style: TextStyle(color: Colors.red),
+              ),
+              )
+            else
+              SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 if(_formKey.currentState!.validate()) {
-                  final email = _emailController.text;
-                  final password = _passwordController.text;
-                  final authenticator = MockAuthProvider();
-                  final token = await authenticator.signIn(email, password);
-                  if (token != null) { //DO A BETTER CHECK HERE
+                  final String response = await AuthService.signIn(_emailController.text, _passwordController.text);
+                  if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
                     Navigator.pushNamed(context, '/home');
                   } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text('Invalid email or password')),
-                    );
+                    if (mounted) {
+                        setState(() {
+                          _error = true;
+                          _errorMessage = response;
+                        });
+                    }
                   }
                 }
               },
@@ -65,7 +78,7 @@ class SignInPageState extends State<SignInPage> {
                 Navigator.pushNamed(context, '/sign_up');
                 },
               child: Text('Click here to create an account'),
-            )
+            ),
           ],
           ),
         ),

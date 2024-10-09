@@ -5,39 +5,37 @@ import 'package:crypto/crypto.dart';
 
 class AuthService {
 // For AccountManager:
-static String _accountManagerUrl = "grs-accountmanager.azurewebsites.net";
-static String _accountManagerDevUrl = "grs-accountmanager-dev.azurewebsites.net";
+static final String _accountManagerUrl = "https://grs-accountmanager.azurewebsites.net";
+static final String _accountManagerDevUrl = "https://grs-accountmanager-dev.azurewebsites.net";
 
 // For Logic:
-static String _logicApiUrl = "grs-logic.azurewebsites.net";
-static String _logicApiDevUrl = "grs-logic-dev.azurewebsites.net";
+static final String _logicApiUrl = "https://grs-logic.azurewebsites.net";
+static final String _logicApiDevUrl = "https://grs-logic-dev.azurewebsites.net";
 
 // For DbAccessor:
-static String _dbUrl = "grs-dbaccessor.azurewebsites.net";
-static String _dbDevUrl = "grs-dbaccessor-dev.azurewebsites.net";
+static final String _dbUrl = "https://grs-dbaccessor.azurewebsites.net";
+static final String _dbDevUrl = "https://grs-dbaccessor-dev.azurewebsites.net";
 
-static Map<String, String> _defaultHeaders = {};
-//i wanna handle 200
+static Map<String, String> _defaultHeaders = {
+  'Content-Type': 'application/json'
+};
 
-  static bool isSignedIn() {return false;}
+static const Map<String, String> RESPONSE_MSG = {
+  "SUCCESS": 'Sign in successful!',
+  'INVALID_INPUT': 'Invalid email or password',
+  'SERVER_ERROR': 'Error 500: Server error. Please try again later.',
+  'UNKNOWN_ERROR': 'Unknown error',
+};
 
-  static bool sign(String email, String password){ 
-
-    //take the email and password, send http request
-    //if the request is successful, then cache the token
-    //and somehow save it in the state too 
-    
-    return false;
-  }
-
-  static Future<bool> signIn(String email, String password) async {
-    //sha 256 the password
-    //send the email and password to the account manager URL
-    //if the response is 200, then cache the token
-
-    //if the response is 401, then return the response
-
-    //if the response is 500, then return the response
+/*
+  This method sends a POST request to the account manager to verify the login credentials.
+  Parameters:
+    email: The email address of the user
+    password: The password of the user
+  Returns:
+    A Future<String> that resolves to a message indicating the result of the sign in attempt
+*/
+  static Future<String> signIn(String email, String password) async {
     try {
       // SHA-256 the password
       var bytes = utf8.encode(password);
@@ -45,6 +43,7 @@ static Map<String, String> _defaultHeaders = {};
 
       // Send the email and hashed password to the account manager URL
       var url = Uri.parse('$_accountManagerDevUrl/api/VerifyLoginCredentials');
+
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
 
       // Handle the response
@@ -63,21 +62,19 @@ static Map<String, String> _defaultHeaders = {};
         // For example, using shared_preferences:
         // SharedPreferences prefs = await SharedPreferences.getInstance();
         // await prefs.setString('auth_token', token);
-        return true;
-      } else if (response.statusCode == 401) {
-        // Unauthorized
-        return false;
+        return RESPONSE_MSG['SUCCESS']!;
+      } else if (response.statusCode == 400) {
+        return RESPONSE_MSG['INVALID_INPUT']!;
       } else if (response.statusCode == 500) {
-        // Server error
-        return false;
+        return RESPONSE_MSG['SERVER_ERROR']!;
       } else {
-        // Other response codes
-        return false;
+        return 'Error ${response.statusCode}: ${response.body}';
       }
     } catch (e) {
       // Handle any errors that occur during the request
       print('Error during sign in: $e');
-      return false;
+      //return the unknown error with e as the message
+      return '${RESPONSE_MSG['UNKNOWN_ERROR']!}: $e';
     }
   }
 
