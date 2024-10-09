@@ -25,7 +25,6 @@ class CachingService {
       await prefs.setString("${key}_expiration", expirationTime.toIso8601String());
       // print in what format data was saved
       print('Data saved to SharedPreferences.');
-      print("Key: $key, Data: $data, Expiration Time: $expirationTime");
       return true;
     } catch (e) {
       print('Error saving data to SharedPreferences: $e');

@@ -37,7 +37,7 @@ class PostService {
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        print('Data: $data');
+        // print('Data: $data');
         List<Post> posts = (data as List).map((postJson) {
           Post post = Post.fromJson(postJson);
           post.authToken = "dummyAuthToken";
@@ -78,7 +78,7 @@ class PostService {
       'X-User-ID': await userID ?? '',
     };
 
-    print('Post Data: $postData');
+    // print('Post Data: $postData');
 
     try {
       final response = await http.post(url, headers: headers, body: postData);
@@ -117,7 +117,7 @@ class PostService {
       'X-User-ID': await userID ?? '',
     };
 
-    print('Post Data: $postData');
+    // print('Post Data: $postData');
 
     try {
       final response = await http.post(url, headers: headers, body: postData);

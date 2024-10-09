@@ -77,9 +77,6 @@ static final Map<String, String> RESPONSE_MSG = {
       var url = Uri.parse('${ENV.API_AUTH_URL}/api/CreateUser');
       var response = await _post(url, _defaultHeaders, formData);
 
-      // Print all the response data
-      print('Asit Response data: ${response.body}');
-
       // Handle the response
       if (response.statusCode == 200) {
         // Cache the token (assuming the token is in the response body)
