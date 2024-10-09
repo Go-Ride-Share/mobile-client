@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
-import 'package:go_ride_sharing/pages/create_post_page.dart';
+import 'package:go_ride_sharing/pages/post_form_page.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -13,7 +13,7 @@ class PostCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => CreatePostPage(post: post)),
+          MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
         );
       },
       child: Card(

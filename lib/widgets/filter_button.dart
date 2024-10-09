@@ -3,11 +3,13 @@ import 'package:flutter/material.dart';
 class FilterButton extends StatefulWidget {
   final String label;
   final VoidCallback onPressed;
+  final bool isSelected;
 
   const FilterButton({
     super.key,
     required this.label,
     required this.onPressed,
+    required this.isSelected,
   });
 
   @override
@@ -15,7 +17,13 @@ class FilterButton extends StatefulWidget {
 }
 
 class _FilterButtonState extends State<FilterButton> {
-  bool isToggled = false;
+  late bool isToggled;
+
+  @override
+  void initState() {
+    super.initState();
+    isToggled = widget.isSelected;
+  }
 
   void _handlePress() {
     setState(() {
@@ -27,14 +35,14 @@ class _FilterButtonState extends State<FilterButton> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
-      height: 30.0, // Set the desired height here
+      height: 30.0,
       child: OutlinedButton(
         onPressed: _handlePress,
         style: ButtonStyle(
           side: WidgetStateProperty.all(
             BorderSide(
               color: isToggled ? Colors.blue : const Color(0xFF9C9C9C),
-              width: 2.0, // Increase the border weight here
+              width: 2.0,
             ),
           ),
           foregroundColor: WidgetStateProperty.all(
@@ -47,7 +55,7 @@ class _FilterButtonState extends State<FilterButton> {
         child: Text(
           widget.label,
           style: const TextStyle(
-            fontWeight: FontWeight.bold, // Increase the text weight here
+            fontWeight: FontWeight.bold,
           ),
         ),
       ),

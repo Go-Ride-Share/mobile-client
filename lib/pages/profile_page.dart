@@ -1,13 +1,32 @@
-// File: lib/pages/profile_page.dart
-
 import 'package:flutter/material.dart';
-import 'package:go_ride_sharing/widgets/filter_button.dart'; // Update with your actual project name
-import 'package:go_ride_sharing/services/post_service.dart'; // Import your PostService
-import 'package:go_ride_sharing/widgets/post_card.dart'; // Import your PostCard
-import 'package:go_ride_sharing/models/post.dart'; // Import your Post model
+import 'package:go_ride_sharing/widgets/filter_button.dart';
+import 'package:go_ride_sharing/services/post_service.dart';
+import 'package:go_ride_sharing/widgets/post_card.dart';
+import 'package:go_ride_sharing/models/post.dart';
 
-class ProfilePage extends StatelessWidget {
+enum FilterType { today, future, past }
+
+class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
+
+  @override
+  _ProfilePageState createState() => _ProfilePageState();
+}
+
+class _ProfilePageState extends State<ProfilePage> {
+  // Set to store selected filters
+  Set<FilterType> _selectedFilters = {FilterType.today};
+
+  // Method to update selected filters
+  void _updateFilter(FilterType filter) {
+    setState(() {
+      if (_selectedFilters.contains(filter)) {
+        _selectedFilters.remove(filter);
+      } else {
+        _selectedFilters.add(filter);
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -17,11 +36,14 @@ class ProfilePage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Padding(
-            padding: EdgeInsets.all(16.0),
-            child: FilterButtonRow(),
+            padding: const EdgeInsets.all(16.0),
+            child: FilterButtonRow(
+              selectedFilters: _selectedFilters,
+              onFilterChanged: _updateFilter,
+            ),
           ),
           Expanded(
-            child: PostList(),
+            child: PostList(filters: _selectedFilters),
           ),
         ],
       ),
@@ -30,7 +52,9 @@ class ProfilePage extends StatelessWidget {
 }
 
 class PostList extends StatelessWidget {
-  const PostList({super.key});
+  final Set<FilterType> filters;
+
+  const PostList({super.key, required this.filters});
 
   @override
   Widget build(BuildContext context) {
@@ -44,10 +68,25 @@ class PostList extends StatelessWidget {
         } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
           return const Center(child: Text('No posts available'));
         } else {
+          final now = DateTime.now();
+          final filteredPosts = snapshot.data!.where((post) {
+            final departureDate = DateTime(post.departureDate.year, post.departureDate.month, post.departureDate.day);
+            final today = DateTime(now.year, now.month, now.day);
+            return filters.any((filter) {
+              switch (filter) {
+                case FilterType.today:
+                  return departureDate == today;
+                case FilterType.future:
+                  return departureDate.isAfter(today);
+                case FilterType.past:
+                  return departureDate.isBefore(today);
+              }
+            });
+          }).toList();
           return ListView.builder(
-            itemCount: snapshot.data!.length,
+            itemCount: filteredPosts.length,
             itemBuilder: (context, index) {
-              return PostCard(post: snapshot.data![index]);
+              return PostCard(post: filteredPosts[index]);
             },
           );
         }
@@ -57,7 +96,14 @@ class PostList extends StatelessWidget {
 }
 
 class FilterButtonRow extends StatelessWidget {
-  const FilterButtonRow({super.key});
+  final Set<FilterType> selectedFilters;
+  final ValueChanged<FilterType> onFilterChanged;
+
+  const FilterButtonRow({
+    super.key,
+    required this.selectedFilters,
+    required this.onFilterChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -66,24 +112,20 @@ class FilterButtonRow extends StatelessWidget {
       children: [
         FilterButton(
           label: 'Today',
-          onPressed: () {
-            // Add your logic here
-            print('Today printing out');
-          },
+          onPressed: () => onFilterChanged(FilterType.today),
+          isSelected: selectedFilters.contains(FilterType.today),
         ),
         const SizedBox(width: 8),
         FilterButton(
           label: 'Future',
-          onPressed: () {
-            // Add your logic here
-          },
+          onPressed: () => onFilterChanged(FilterType.future),
+          isSelected: selectedFilters.contains(FilterType.future),
         ),
         const SizedBox(width: 8),
         FilterButton(
           label: 'Past',
-          onPressed: () {
-            // Add your logic here
-          },
+          onPressed: () => onFilterChanged(FilterType.past),
+          isSelected: selectedFilters.contains(FilterType.past),
         ),
       ],
     );
@@ -96,9 +138,8 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return PreferredSize(
-      preferredSize: const Size.fromHeight(1.0), // Set a spacious height
+      preferredSize: const Size.fromHeight(1.0),
       child: AppBar(
-        //backgroundColor: Colors.blue, // Set the background color to blue
         flexibleSpace: const Padding(
           padding: EdgeInsets.all(16.0),
           child: Row(
@@ -107,15 +148,15 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               Column(
                 mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start, // Align to the left
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   WelcomeHeader(),
                   Subtitle(),
                 ],
               ),
               CircleAvatar(
-                radius: 35, // Adjust the radius as needed
-                backgroundImage: AssetImage('assets/images/profile_image.png'), // Replace with your image asset
+                radius: 35,
+                backgroundImage: AssetImage('assets/images/profile_image.png'),
               ),
             ],
           ),
@@ -134,8 +175,6 @@ class WelcomeHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      //color: Colors.red, // Set the background color to red
-      //padding: const EdgeInsets.all(8.0), // Add some padding if needed
       child: RichText(
         text: const TextSpan(
           children: [
