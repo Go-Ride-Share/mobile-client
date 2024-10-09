@@ -1,16 +1,14 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import '../models/profile.dart';
-import 'package:crypto/crypto.dart';
 import 'caching_service.dart';
 import '../constants.dart';
 class AuthService {
 
-static Map<String, String> _defaultHeaders = {
+static final Map<String, String> _defaultHeaders = {
   'Content-Type': 'application/json'
 };
 
-static const Map<String, String> RESPONSE_MSG = {
+static final Map<String, String> RESPONSE_MSG = {
   "SUCCESS": 'Sign in successful!',
   'INVALID_INPUT': 'Invalid email or password',
   'SERVER_ERROR': 'Error 500: Server error. Please try again later.',
