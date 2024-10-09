@@ -2,19 +2,9 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import '../models/profile.dart';
 import 'package:crypto/crypto.dart';
-
+import 'caching_service.dart';
+import '../constants.dart';
 class AuthService {
-// For AccountManager:
-static final String _accountManagerUrl = "https://grs-accountmanager.azurewebsites.net";
-static final String _accountManagerDevUrl = "https://grs-accountmanager-dev.azurewebsites.net";
-
-// For Logic:
-static final String _logicApiUrl = "https://grs-logic.azurewebsites.net";
-static final String _logicApiDevUrl = "https://grs-logic-dev.azurewebsites.net";
-
-// For DbAccessor:
-static final String _dbUrl = "https://grs-dbaccessor.azurewebsites.net";
-static final String _dbDevUrl = "https://grs-dbaccessor-dev.azurewebsites.net";
 
 static Map<String, String> _defaultHeaders = {
   'Content-Type': 'application/json'
@@ -37,12 +27,13 @@ static const Map<String, String> RESPONSE_MSG = {
 */
   static Future<String> signIn(String email, String password) async {
     try {
+      CachingService cache = CachingService();
       // SHA-256 the password
       var bytes = utf8.encode(password);
-      var hashedPassword = sha256.convert(bytes).toString();
+      var hashedPassword = password; //sha256.convert(bytes).toString();
 
       // Send the email and hashed password to the account manager URL
-      var url = Uri.parse('$_accountManagerDevUrl/api/VerifyLoginCredentials');
+      var url = Uri.parse('$ENV.API_AUTH_URL/api/VerifyLoginCredentials');
 
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
 
@@ -53,15 +44,11 @@ static const Map<String, String> RESPONSE_MSG = {
         var bearerToken = jsonDecode(response.body)['logic_token'];
         var dbToken = jsonDecode(response.body)['db_token'];
 
-        //for now, print them all to console 
-        print('User ID: $userId');
-        print('Bearer Token: $bearerToken');
-        print('DB Token: $dbToken');
+        // Cache the token with 1 day expiration
+        await cache.saveData("user_id", userId, Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData("logic_token", bearerToken, Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData("db_token", dbToken, Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
 
-        // Cache the token using your preferred method
-        // For example, using shared_preferences:
-        // SharedPreferences prefs = await SharedPreferences.getInstance();
-        // await prefs.setString('auth_token', token);
         return RESPONSE_MSG['SUCCESS']!;
       } else if (response.statusCode == 400) {
         return RESPONSE_MSG['INVALID_INPUT']!;
@@ -89,7 +76,7 @@ static const Map<String, String> RESPONSE_MSG = {
   //   }),
   // );
 
-    // make private http get helper method
+  // make private http get helper method
   static Future<http.Response> _get(Uri url, Map<String, String> headers, [Map<String, String>? queryParams]) {
     if (queryParams != null && queryParams.isNotEmpty) {
       url = Uri.parse('${url.toString()}?${Uri(queryParameters: queryParams).query}');
