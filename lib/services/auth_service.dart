@@ -40,12 +40,10 @@ static final Map<String, String> RESPONSE_MSG = {
         // Cache the token (assuming the token is in the response body)
         var userId = jsonDecode(response.body)['user_id'];
         var bearerToken = jsonDecode(response.body)['logic_token'];
-        var dbToken = jsonDecode(response.body)['db_token'];
 
         // Cache the token with 1 day expiration
-        await cache.saveData("user_id", userId, Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
-        await cache.saveData("logic_token", bearerToken, Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));
-        await cache.saveData("db_token", dbToken, Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData(ENV.CACHE_USER_ID_KEY, userId, const Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData(ENV.CACHE_TOKEN_KEY, bearerToken, const Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));
 
         return RESPONSE_MSG['SUCCESS']!;
       } else if (response.statusCode == 400) {

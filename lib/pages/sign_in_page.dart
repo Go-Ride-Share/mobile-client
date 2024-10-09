@@ -32,13 +32,13 @@ class SignInPageState extends State<SignInPage> {
             children: <Widget>[
             TextFormField(
               controller: _emailController,
-              decoration: InputDecoration(labelText: 'Email'),
+              decoration: const InputDecoration(labelText: 'Email'),
               keyboardType: TextInputType.emailAddress,
               validator: (value) => ValidationService.validateEmail(value),
             ),
             TextFormField(
               controller: _passwordController,
-              decoration: InputDecoration(labelText: 'Password'),
+              decoration: const InputDecoration(labelText: 'Password'),
               obscureText: true,
               validator: (value) => ValidationService.validatePassword(value),
             ),
@@ -47,11 +47,11 @@ class SignInPageState extends State<SignInPage> {
               padding: const EdgeInsets.only(top: 20.0),
               child: Text(
                 _errorMessage,
-                style: TextStyle(color: Colors.red),
+                style: const TextStyle(color: Colors.red),
               ),
               )
             else
-              SizedBox(height: 20),
+              const SizedBox(height: 20),
             ElevatedButton(
               onPressed: () async {
                 if(_formKey.currentState!.validate()) {
@@ -68,14 +68,14 @@ class SignInPageState extends State<SignInPage> {
                   }
                 }
               },
-              child: Text('Sign In'),
+              child: const Text('Sign In'),
             ),
-            SizedBox(height: 20),
+            const SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
                 Navigator.pushNamed(context, '/sign_up_page');
                 },
-              child: Text('Click here to create an account'),
+              child: const Text('Click here to create an account'),
             ),
           ],
           ),
