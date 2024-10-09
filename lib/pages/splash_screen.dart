@@ -23,8 +23,11 @@ class SplashScreenState extends State<SplashScreen> {
     return Scaffold(
       backgroundColor: notYellow, // Replace with your desired color
       body: Center(
-        child: Image.asset('assets/images/LogoNotBlack.png'), // Ensure you have a logo image at this path
-      ),
-    );
+        child: Padding(
+          padding: const EdgeInsets.all(20.0),
+          child: Image.asset('assets/images/LogoNotBlack.png'),
+          ),
+        ),
+      );
   }
 }

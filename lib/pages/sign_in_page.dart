@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import '../pages/sign_up_page.dart';
 import '../services/auth_service.dart';
-import '../services/mock_auth_provider.dart';
 import '../services/validation_service.dart';
 
 class SignInPage extends StatefulWidget {
@@ -75,7 +73,7 @@ class SignInPageState extends State<SignInPage> {
             SizedBox(height: 20),
             ElevatedButton(
                 onPressed: () {
-                Navigator.pushNamed(context, '/sign_up');
+                Navigator.pushNamed(context, '/sign_up_page');
                 },
               child: Text('Click here to create an account'),
             ),
