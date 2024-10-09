@@ -14,10 +14,6 @@ class SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 4), () {
-      //check if i am signed in using caches and tokens
-      //if signed in, navigate to home page
-      //else navigate to sign in page
-      // either implement JSON caching or use shared preferences "local storage using key value pairs"
       Navigator.of(context).pushReplacementNamed('/sign_in_page'); // Replace '/home' with your target route
     });
   }
