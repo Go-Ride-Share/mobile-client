@@ -11,4 +11,7 @@ class ENV {
 
     static const String CACHE_TOKEN_KEY = "bearer_token";
     static const String CACHE_USER_ID_KEY = "user_id";
+
+    // Sprint 1 - caching only the username for use within the App, will create complex states in the future
+    static const String PROFILE_NAME = "profile_name";
 }

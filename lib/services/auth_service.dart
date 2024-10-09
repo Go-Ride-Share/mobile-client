@@ -33,8 +33,50 @@ static final Map<String, String> RESPONSE_MSG = {
 
       // Send the email and hashed password to the account manager URL
       var url = Uri.parse('${ENV.API_AUTH_URL}/api/VerifyLoginCredentials');
-
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
+
+      // Handle the response
+      if (response.statusCode == 200) {
+        // Cache the token (assuming the token is in the response body)
+        var userId = jsonDecode(response.body)['user_id'];
+        var bearerToken = jsonDecode(response.body)['logic_token'];
+
+        // Cache the token with 1 day expiration
+        await cache.saveData(ENV.CACHE_USER_ID_KEY, userId, const Duration(days: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData(ENV.CACHE_TOKEN_KEY, bearerToken, const Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));
+        await cache.saveData(ENV.PROFILE_NAME, "John", const Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));
+
+        return RESPONSE_MSG['SUCCESS']!;
+      } else if (response.statusCode == 400) {
+        return RESPONSE_MSG['INVALID_INPUT']!;
+      } else if (response.statusCode == 500) {
+        return RESPONSE_MSG['SERVER_ERROR']!;
+      } else {
+        return 'Error ${response.statusCode}: ${response.body}';
+      }
+    } catch (e) {
+      // Handle any errors that occur during the request
+      print('Error during sign in: $e');
+      //return the unknown error with e as the message
+      return '${RESPONSE_MSG['UNKNOWN_ERROR']!}: $e';
+    }
+  }
+
+  static Future<String> sign_up(Map<String, dynamic> formData) async {
+    try {
+      // Extract email and password from formData
+      String password = formData['password'];
+
+      CachingService cache = CachingService();
+      // SHA-256 the password
+      var bytes = utf8.encode(password);
+      formData['password'] = sha256.convert(bytes).toString();;
+      // Send the email and hashed password to the account manager URL
+      var url = Uri.parse('${ENV.API_AUTH_URL}/api/CreateUser');
+      var response = await _post(url, _defaultHeaders, formData);
+
+      // Print all the response data
+      print('Asit Response data: ${response.body}');
 
       // Handle the response
       if (response.statusCode == 200) {
@@ -56,22 +98,11 @@ static final Map<String, String> RESPONSE_MSG = {
       }
     } catch (e) {
       // Handle any errors that occur during the request
-      print('Error during sign in: $e');
+      print('Error during sign up: $e');
       //return the unknown error with e as the message
       return '${RESPONSE_MSG['UNKNOWN_ERROR']!}: $e';
     }
   }
-
-  // Future<http.Response> createAccount(Profile person) {
-  // return http.post(
-  //   Uri.parse('https://jsonplaceholder.typicode.com/albums'),
-  //   headers: <String, String>{
-  //     'Content-Type': 'application/json; charset=UTF-8',
-  //   },
-  //   body: jsonEncode(<String, String>{
-  //     'title': title,
-  //   }),
-  // );
 
   // make private http get helper method
   static Future<http.Response> _get(Uri url, Map<String, String> headers, [Map<String, String>? queryParams]) {

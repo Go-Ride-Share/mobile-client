@@ -1,14 +1,16 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-
+import 'package:image_picker/image_picker.dart';
+import '../services/validation_service.dart';
+import '../services/auth_service.dart';
 class SignUpPage extends StatefulWidget {
   const SignUpPage({super.key}); // Add const constructor
 
   @override
-  _SignUpPageState createState() => _SignUpPageState();
+  SignUpPageState createState() => SignUpPageState();
 }
 
-class _SignUpPageState extends State<SignUpPage> {
+class SignUpPageState extends State<SignUpPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
@@ -16,12 +18,23 @@ class _SignUpPageState extends State<SignUpPage> {
   final _confirmPasswordController = TextEditingController();
   final _bioController = TextEditingController();
   final _phoneController = TextEditingController();
-  List<String> _preferences = [];
+  
   File? _image;
+  final ImagePicker _picker = ImagePicker();
+
+  // Add error handling for sign up
+  bool _error = false;
+  String _errorMessage = '';
 
   Future<void> _pickImage() async {
+    final pickedFile = await _picker.pickImage(source: ImageSource.gallery);
+
     setState(() {
-      _image = null;
+      if (pickedFile != null) {
+        _image = File(pickedFile.path);
+      } else {
+        print('No image selected.');
+      }
     });
   }
 
@@ -50,23 +63,14 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _emailController,
                 decoration: const InputDecoration(labelText: 'Email'),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
+                validator: (value) => ValidationService.validateEmail(value),
               ),
               TextFormField(
                 controller: _passwordController,
                 decoration: const InputDecoration(labelText: 'Password'),
                 obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
+                validator: (value) => ValidationService.validatePassword(value),
+
               ),
               TextFormField(
                 controller: _confirmPasswordController,
@@ -85,18 +89,13 @@ class _SignUpPageState extends State<SignUpPage> {
               TextFormField(
                 controller: _bioController,
                 decoration: const InputDecoration(labelText: 'Bio'),
-                maxLines: 3,
+                maxLines: 2,
               ),
               TextFormField(
                 controller: _phoneController,
                 decoration: const InputDecoration(labelText: 'Phone Number'),
                 keyboardType: TextInputType.phone,
-              ),
-              TextFormField(
-                decoration: const InputDecoration(labelText: 'Preferences (comma separated)'),
-                onChanged: (value) {
-                  _preferences = value.split(',').map((e) => e.trim()).toList();
-                },
+                validator: (value) => ValidationService.validatePhoneNumber(value),
               ),
               const SizedBox(height: 20),
               _image == null
@@ -106,14 +105,41 @@ class _SignUpPageState extends State<SignUpPage> {
                 onPressed: _pickImage,
                 child: const Text('Upload profile picture'),
               ),
-              const SizedBox(height: 20),
+              if (_error)
+                Padding(
+                  padding: const EdgeInsets.only(top: 20.0),
+                  child: Text(
+                    _errorMessage,
+                    style: const TextStyle(color: Colors.red),
+                  ),
+                )
+              else
+                const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                  // Process data
-                  Navigator.pushReplacementNamed(context, '/sign_in');
+                onPressed: () async {
+                if(_formKey.currentState!.validate()) {
+                  // bundle up all the data in a Map<String, dynamic>
+                  final Map<String, dynamic> form_data = {
+                    'name': _nameController.text,
+                    'email': _emailController.text,
+                    'password': _passwordController.text,
+                    'bio': _bioController.text,
+                    'phone': _phoneController.text,
+                    'image': _image,
+                  };
+                  final String response = await AuthService.sign_up(form_data);
+                  if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
+                    Navigator.pushNamed(context, '/home');
+                  } else {
+                    if (mounted) {
+                        setState(() {
+                          _error = true;
+                          _errorMessage = response;
+                        });
+                    }
                   }
-                },
+                }
+              },
                 child: const Text('Sign Up'),
               ),
             ],
