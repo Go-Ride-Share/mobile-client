@@ -1,16 +1,16 @@
 class ENV {
-    // For Auth:
-    static const String API_AUTH_URL_PROD = "https://grs-accountmanager.azurewebsites.net";
-    static const String API_AUTH_URL = "https://grs-accountmanager-dev.azurewebsites.net";
 
-    // For Logic:
-    static const String API_BASE_URL_PROD = "https://grs-logic.azurewebsites.net";
+    // UNCOMMENT THE FOLLOWING LINE TO USE LOCALHOST
+    // static const String API_AUTH_URL = "http://localhost:7071/api";
+    // static const String API_BASE_URL = "http://localhost:7072/api";
+
+    // COMMENT THE FOLLOWING 2 LINES WHEN USING LOCALHOST
+    static const String API_AUTH_URL = "https://grs-accountmanager-dev.azurewebsites.net";
     static const String API_BASE_URL = "https://grs-logic-dev.azurewebsites.net";
 
-    // For DB:
-    static const String API_DB_URL_PROD = "https://grs-logic.azurewebsites.net";
-    static const String API_DB_URL = "https://grs-logic-dev.azurewebsites.net";
-
+    static const String API_BASE_URL_PROD = "https://grs-logic.azurewebsites.net";
+    static const String API_AUTH_URL_PROD = "https://grs-accountmanager.azurewebsites.net";
+    
     static const int TOKEN_EXPIRATION_DURATION = 6; //in hours
 
     static const String CACHE_BEARER_TOKEN_KEY = "bearer_token";

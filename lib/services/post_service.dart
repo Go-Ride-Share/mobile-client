@@ -7,20 +7,20 @@ import '../constants.dart';
 class PostService {
   CachingService cache = CachingService();
 
-  late Future<String?> logicLayerAccessToken;
-  late Future<String?> dbLayerAccessToken;
+  late Future<String?> baseAccessToken;
+  late Future<String?> dbAccessToken;
   late Future<String?> userID;
 
   PostService() {
-    logicLayerAccessToken = cache.getData(ENV.CACHE_BEARER_TOKEN_KEY);
-    dbLayerAccessToken = cache.getData(ENV.CACHE_DB_TOKEN_KEY);
+    baseAccessToken = cache.getData(ENV.CACHE_BEARER_TOKEN_KEY);
+    dbAccessToken = cache.getData(ENV.CACHE_DB_TOKEN_KEY);
     userID = cache.getData(ENV.CACHE_USER_ID_KEY);
   }
 
   Future<List<Post>> fetchProfilePosts() async {
     final userId = await userID;
-    final logicToken = await logicLayerAccessToken;
-    final dbToken = await dbLayerAccessToken;
+    final logicToken = await baseAccessToken;
+    final dbToken = await dbAccessToken;
 
     final url = Uri.parse('${ENV.API_BASE_URL}/api/GetPosts?userId=$userId');
 
@@ -73,8 +73,8 @@ class PostService {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await logicLayerAccessToken ?? ''}',
-      'X-Db-Token': await dbLayerAccessToken ?? '',
+      'Authorization': 'Bearer ${await baseAccessToken ?? ''}',
+      'X-Db-Token': await dbAccessToken ?? '',
       'X-User-ID': await userID ?? '',
     };
 
@@ -112,8 +112,8 @@ class PostService {
 
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await logicLayerAccessToken ?? ''}',
-      'X-Db-Token': await dbLayerAccessToken ?? '',
+      'Authorization': 'Bearer ${await baseAccessToken ?? ''}',
+      'X-Db-Token': await dbAccessToken ?? '',
       'X-User-ID': await userID ?? '',
     };
 
