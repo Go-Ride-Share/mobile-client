@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/pages/post_form_page.dart';
+import 'package:go_ride_sharing/services/post_service.dart';
+import 'package:go_ride_sharing/services/message_service.dart';
+import 'package:go_ride_sharing/models/conversation.dart';
+import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -14,10 +18,10 @@ class PostCard extends StatelessWidget {
       //   // Navigator.push(
       //   //   context,
       //   //   MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
-      //   );
+      //   // );
       // },
       child: Card(
-        color: Color(0xFFF3F7F9),
+        color: Color(0xFFFFF9C4), // Light shade of yellow
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
         ),
@@ -89,6 +93,25 @@ class TripDetails extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
+              'Posted by: ${post.posterName}',
+              style: TextStyle(
+                fontSize: 14.0,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            Text(
+              '${post.seatsAvailable} seats',
+              style: TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ],
+        ),
+        SizedBox(height: 5.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
               'Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
               style: TextStyle(
                 fontSize: 14.0,
@@ -115,12 +138,41 @@ class TripDetails extends StatelessWidget {
             fontSize: 14.0,
           ),
         ),
-        SizedBox(height: 5.0),
-        Text(
-          '${post.seatsAvailable} seats',
-          style: TextStyle(
-            fontSize: 14.0,
-          ),
+        SizedBox(height: 10.0),
+        FutureBuilder<String?>(
+          future: PostService().userID,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return CircularProgressIndicator();
+            } else if (snapshot.hasData && snapshot.data != post.posterId) {
+              return ElevatedButton(
+                onPressed: () async {
+                  String conversationId = await MessageService().createConversation(post.posterId);
+                  Conversation conversation = Conversation(
+                    conversationId: conversationId,
+                    conversationPartner: post.posterName,
+                    messages: [],
+                    lastMessage: '',
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ConversationDetailPage(conversation: conversation),
+                    ),
+                  );
+                },
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.yellow,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                  ),
+                ),
+                child: Text('Contact'),
+              );
+            } else {
+              return SizedBox.shrink();
+            }
+          },
         ),
       ],
     );

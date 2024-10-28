@@ -9,6 +9,7 @@ class Post {
   int seatsAvailable;
   String postName;
   String? posterName;
+  String? posterId;
   DateTime departureDate;
   double price;
 
@@ -23,6 +24,7 @@ class Post {
     required this.seatsAvailable,
     required this.postName,
     this.posterName,
+    this.posterId,
     required this.departureDate,
     required this.price,
   });
@@ -39,9 +41,11 @@ class Post {
       description: json['description'],
       seatsAvailable: json['seatsAvailable'],
       postName: json['name'],
+      posterName: json['posterName'],
+      posterId: json['posterId'],
       departureDate: json['departureDate'] != null && json['departureDate'].isNotEmpty
           ? DateTime.parse(json['departureDate'])
-          : DateTime.now(), // Default to current date if not provided
+          : DateTime.now(),
       price: (json['price'] as num).toDouble(),
     );
   }
