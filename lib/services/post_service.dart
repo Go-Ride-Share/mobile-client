@@ -117,13 +117,14 @@ class PostService {
 
   Future<List<Post>> fetchAllPosts() async {
     // Create http request data
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/getAllPosts');
+    final url = Uri.parse('${ENV.API_AUTH_URL}/api/getAllPosts');
     final headers = await getHeaders(await baseAccessToken);
 
     // Make the request and parse the data
     try {
       final response = await http.get(url, headers: headers);
-      
+      print('Received response: ${response.statusCode}, ${response.body}');
+
       // Proccess the response
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
@@ -144,7 +145,7 @@ class PostService {
     return [];
   }
 
-  // Returns the standard headers with passed authorizationToken
+  /// Returns the standard headers with passed authorizationToken
   Future<Map<String, String>> getHeaders(String? authorizationToken) async {
     final headers = {
       'Content-Type': 'application/json',
