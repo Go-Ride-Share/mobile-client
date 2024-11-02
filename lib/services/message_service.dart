@@ -1,78 +1,35 @@
 import 'dart:convert';
 import 'dart:math';
+import 'package:go_ride_sharing/utils.dart';
+import '../constants.dart';
 import '../models/conversation.dart';
 import '../models/message.dart';
+import 'caching_service.dart';
 
 class MessageService {
+
+  CachingService cache = CachingService();
+
+  late Future<String?> baseAccessToken;
+  late Future<String?> dbAccessToken;
+  late Future<String?> userID;
+
+  MessageService() {
+    baseAccessToken = cache.getData(ENV.CACHE_BEARER_TOKEN_KEY);
+    dbAccessToken = cache.getData(ENV.CACHE_DB_TOKEN_KEY);
+    userID = cache.getData(ENV.CACHE_USER_ID_KEY);
+  }
+
   Future<List<Conversation>> getAllConversations() async {
-    // Fake JSON response
-    final String response = '''
-    [
-      {
-      "conversationId": "1",
-      "name": "Alice Johnson",
-      "lastMessage": "Hey, how are you?"
-      },
-      {
-      "conversationId": "2",
-      "name": "Bob Smith",
-      "lastMessage": "Let's catch up tomorrow."
-      },
-      {
-      "conversationId": "3",
-      "name": "Charlie Brown",
-      "lastMessage": "Can you pick me up at 5 PM?"
-      },
-      {
-      "conversationId": "4",
-      "name": "David Kim",
-      "lastMessage": "I'm waiting at the main entrance."
-      },
-      {
-      "conversationId": "5",
-      "name": "Eve Zhang",
-      "lastMessage": "I'll be there in 10 minutes."
-      },
-      {
-      "conversationId": "6",
-      "name": "Frank O'Connor",
-      "lastMessage": "Can you share your location?"
-      },
-      {
-      "conversationId": "7",
-      "name": "Grace Lee",
-      "lastMessage": "I'm on my way."
-      },
-      {
-      "conversationId": "8",
-      "name": "Hank Patel",
-      "lastMessage": "Please confirm the ride."
-      },
-      {
-      "conversationId": "9",
-      "name": "Ivy Nguyen",
-      "lastMessage": "Thank you for the ride!"
-      },
-      {
-      "conversationId": "10",
-      "name": "Jack Martinez",
-      "lastMessage": "I'll be there in 5 minutes."
-      }
-    ]
-    ''';
 
-    // Decode the JSON response
-    final List<dynamic> data = jsonDecode(response);
+    // Create http request data
+    const String uri = '${ENV.API_BASE_URL}/api/GetAllConversations';
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
-    // Convert JSON to List<Conversation>
-    List<Conversation> conversations = data.map((json) {
-      return Conversation(
-        conversationId: json['conversationId'],
-        conversationPartner: json['name'],
-        messages: [], // Empty list as messages are not filled out
-        lastMessage: json['lastMessage'],
-      );
-    }).toList();
+    // Make the request and parse the data
+    List<Conversation> conversations = (
+      await sendGetRequestAndGetAsList(convertJsonToConversationList, uri, headers))
+      .cast<Conversation>();
 
     return conversations;
   }
@@ -439,5 +396,21 @@ class MessageService {
 
   Future<void> postMessage(String conversationId, Message message) async {
     // Dummy function, no implementation needed
+  }
+
+  List<Conversation> convertJsonToConversationList(String responseBody) {
+    final data = jsonDecode(responseBody);
+
+    List<Conversation> conversations = (data as List).map((json) {
+      
+        return Conversation(
+          conversationId: json['conversationId'],
+          conversationPartner: json['name'],
+          messages: [], // Empty list as messages are not filled out
+          lastMessage: json['lastMessage'] ?? '', 
+          );
+        }).toList();
+
+        return conversations;
   }
 }
