@@ -25,7 +25,6 @@ import 'package:http/http.dart' as http;
 
       // Proccess the response
       if (response.statusCode == 200) {
-        // Convert response body to a list of conversations and return
         List conversations = convertToList(response.body);
         return conversations;
       } else {
