@@ -147,13 +147,7 @@ class TripDetails extends StatelessWidget {
             } else if (snapshot.hasData && snapshot.data != post.posterId) {
               return ElevatedButton(
                 onPressed: () async {
-                  String conversationId = await MessageService().createConversation(post.posterId);
-                  Conversation conversation = Conversation(
-                    conversationId: conversationId,
-                    conversationPartner: post.posterName,
-                    messages: [],
-                    lastMessage: '',
-                  );
+                  Conversation conversation = await MessageService().createConversation(post.posterId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(

@@ -38,12 +38,18 @@ class MessageService {
     return conversation.messages;
   }
 
-  Future<String> createConversation(String? posterId) async {
-    // Generate a dummy conversationId
-    final String dummyConversationId = DateTime.now().millisecondsSinceEpoch.toString();
-    
-    // Return the dummy conversationId
-    return dummyConversationId;
+  Future<Conversation> createConversation(String? posterId) async {
+    // Create http request data
+    const String uri = '${ENV.API_BASE_URL}/api/CreateConversation';
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final body = {
+      'userId': posterId ?? '',
+      'contents': 'Hi!'
+    };
+
+    Conversation conversation = sendPostRequestAndGetAsObject(convertJsonToConversation, uri, headers, jsonEncode(body));
+
+    return conversation;
   }
 
   Future<List<Message>> pollMessages(String conversationId, DateTime timeStamp) async {
@@ -81,5 +87,19 @@ class MessageService {
     final Conversation conversation = Conversation.fromJson(data);
 
    return conversation.messages;
+  }
+
+  /// Used by createConversation
+  Conversation convertJsonToConversation(String responseBody) {
+    final data = jsonDecode(responseBody);
+    final Conversation conversation = Conversation.fromJson(data);
+
+    final Conversation conv = Conversation(
+      conversationId: 'id',
+      conversationPartner: 'Eddie2',
+      messages: [],
+      lastMessage: 'he'
+    );
+    return conversation;
   }
 }
