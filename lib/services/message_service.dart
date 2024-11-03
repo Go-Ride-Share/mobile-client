@@ -83,7 +83,8 @@ class MessageService {
 
   /// Used by pollMessages
   List<Message> convertJsonToMessageList(String responseBody) {
-    final Conversation conversation = convertJsonToConversation(responseBody);
+    final data = jsonDecode(responseBody);
+    final Conversation conversation = Conversation.fromJson(data);
 
    return conversation.messages;
   }
@@ -93,6 +94,12 @@ class MessageService {
     final data = jsonDecode(responseBody);
     final Conversation conversation = Conversation.fromJson(data);
 
+    final Conversation conv = Conversation(
+      conversationId: 'id',
+      conversationPartner: 'Eddie2',
+      messages: [],
+      lastMessage: 'he'
+    );
     return conversation;
   }
 }
