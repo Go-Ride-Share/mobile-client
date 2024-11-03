@@ -14,11 +14,13 @@ class Conversation {
   });
 
   factory Conversation.fromJson(Map<String, dynamic> json) {
+
+    List<Message> messages = (json['messages'] as List).map((message) => Message.fromJson(message, json['conversationId'])).toList();
     return Conversation(
       conversationId: json['conversationId'],
-      conversationPartner: json['conversationPartner'],
-      messages: (json['messages'] as List).map((message) => Message.fromJson(message)).toList(),
-      lastMessage: json['lastMessage'],
+      conversationPartner: json['user']['name'],
+      messages: messages,
+      lastMessage: messages[0].contents
     );
   }
 

@@ -11,11 +11,11 @@ class Message {
     required this.contents,
   });
 
-  factory Message.fromJson(Map<String, dynamic> json) {
+  factory Message.fromJson(Map<String, dynamic> json, String conversationId) {
     return Message(
-      conversationId: json['conversationId'],
-      posterId: json['posterId'],
-      timestamp: DateTime.parse(json['timestamp']),
+      conversationId: conversationId,
+      posterId: json['senderId'],
+      timestamp: DateTime.parse(json['timeStamp']),
       contents: json['contents'],
     );
   }

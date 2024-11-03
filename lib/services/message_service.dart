@@ -403,12 +403,7 @@ class MessageService {
 
     List<Conversation> conversations = (data as List).map((json) {
       
-        return Conversation(
-          conversationId: json['conversationId'],
-          conversationPartner: json['name'],
-          messages: [], // Empty list as messages are not filled out
-          lastMessage: json['lastMessage'] ?? '', 
-          );
+        return Conversation.fromJson(json);
         }).toList();
 
         return conversations;
