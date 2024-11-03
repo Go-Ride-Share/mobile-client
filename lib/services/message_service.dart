@@ -33,9 +33,17 @@ class MessageService {
     return conversations;
   }
 
-  Future<List<Message>> getMessagesForConversation(Conversation conversation) async {
-    return conversation.messages;
-  }
+  Future<List<Message>> getMessagesForConversation(String conversationId) async {
+
+    // Create http request data
+    final String uri = '${ENV.API_BASE_URL}/api/PollConversation?conversationId=$conversationId';
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+
+    List<Message> messages = (
+      await sendGetRequestAndGetAsList(convertJsonToMessageList, uri, headers))
+    .cast<Message>();
+    
+    return messages.reversed.toList();  }
 
   Future<Conversation> createConversation(String? posterId) async {
     // Create http request data
@@ -61,7 +69,7 @@ class MessageService {
       await sendGetRequestAndGetAsList(convertJsonToMessageList, uri, headers))
     .cast<Message>();
     
-    return messages;
+    return messages.reversed.toList();
   }
 
   Future<void> postMessage(String conversationId, Message message) async {

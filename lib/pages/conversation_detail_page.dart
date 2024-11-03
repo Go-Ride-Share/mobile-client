@@ -1,5 +1,8 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:go_ride_sharing/constants.dart';
+import 'package:go_ride_sharing/services/caching_service.dart';
 import 'package:go_ride_sharing/services/message_service.dart';
 import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/models/message.dart';
@@ -7,7 +10,9 @@ import 'package:go_ride_sharing/models/message.dart';
 class ConversationDetailPage extends StatefulWidget {
   final Conversation conversation;
 
-  ConversationDetailPage({required this.conversation});
+  ConversationDetailPage({
+      required this.conversation
+    });
 
   @override
   _ConversationDetailPageState createState() => _ConversationDetailPageState();
@@ -19,10 +24,12 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
   DateTime _lastTimestamp = DateTime.now();
   final ScrollController _scrollController = ScrollController();
   final TextEditingController _messageController = TextEditingController();
+  String? userId;
 
   @override
   void initState() {
     super.initState();
+    _loadUserId();
     _fetchMessages();
     _timer = Timer.periodic(Duration(seconds: 5), (timer) {
       _pollMessages();
@@ -39,7 +46,7 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
 
   Future<void> _fetchMessages() async {
     try {
-      final messages = await MessageService().getMessagesForConversation(widget.conversation);
+      final messages = await MessageService().getMessagesForConversation(widget.conversation.conversationId);
       setState(() {
         _messages = messages;
         if (messages.isNotEmpty) {
@@ -94,6 +101,13 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
     }
   }
 
+  Future<void> _loadUserId() async {
+    CachingService cache = CachingService();
+    userId = await cache.getData(ENV.CACHE_USER_ID_KEY);
+
+    setState(() {}); // Update the UI once userId is loaded
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -110,7 +124,7 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
                     itemCount: _messages.length,
                     itemBuilder: (context, index) {
                       final message = _messages[index];
-                      final isMine = message.posterId == 'user1';
+                      final isMine = message.posterId == userId;
                       return MessageBubble(
                         message: message,
                         alignment: isMine ? Alignment.centerRight : Alignment.centerLeft,

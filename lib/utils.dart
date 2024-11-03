@@ -21,7 +21,7 @@ import 'package:http/http.dart' as http;
     // Make the request and parse the data
     try {
       final response = await http.get(url, headers: headers);
-      print('Received response: ${response.statusCode}, ${response.body}');
+      // print('Received response: ${response.statusCode}, ${response.body}');
 
       // Proccess the response
       if (response.statusCode == 200) {
@@ -47,7 +47,7 @@ import 'package:http/http.dart' as http;
     // Make the request and parse the data
     try {
       final response = await http.post(url, headers: headers, body: body);
-      print('Received response: ${response.statusCode}, ${response.body}');
+      // print('Received response: ${response.statusCode}, ${response.body}');
 
       // Proccess the response
       if (response.statusCode == 200) {
@@ -73,7 +73,7 @@ import 'package:http/http.dart' as http;
     // Make the request and parse the data
     try {
       final response = await http.post(url, headers: headers, body: body);
-      print('Received response: ${response.statusCode}, ${response.body}');
+      // print('Received response: ${response.statusCode}, ${response.body}');
 
       // Proccess the response
       if (response.statusCode != 200) {
