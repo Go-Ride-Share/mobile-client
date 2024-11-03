@@ -39,7 +39,7 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
 
   Future<void> _fetchMessages() async {
     try {
-      final messages = await MessageService().getMessagesForConversation(widget.conversation.conversationId);
+      final messages = await MessageService().getMessagesForConversation(widget.conversation);
       setState(() {
         _messages = messages;
         if (messages.isNotEmpty) {

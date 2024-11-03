@@ -20,7 +20,7 @@ class Conversation {
       conversationId: json['conversationId'],
       conversationPartner: json['user']['name'],
       messages: messages,
-      lastMessage: messages[0].contents
+      lastMessage: messages.isNotEmpty ? messages[0].contents : ''
     );
   }
 
