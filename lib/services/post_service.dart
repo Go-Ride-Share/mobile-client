@@ -117,7 +117,9 @@ class PostService {
     final data = jsonDecode(responseBody);
         List<Post> posts = (data as List).map((postJson) {
           return Post.fromJson(postJson);
-        }).toList();
+        })
+        .where((post) => post.postName != "Load test")
+        .toList();
 
     return posts;
   }
