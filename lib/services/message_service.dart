@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:math';
 import 'package:go_ride_sharing/utils.dart';
 import '../constants.dart';
 import '../models/conversation.dart';
@@ -66,7 +65,15 @@ class MessageService {
   }
 
   Future<void> postMessage(String conversationId, Message message) async {
-    // Dummy function, no implementation needed
+    // Create http request data
+    const String uri = '${ENV.API_BASE_URL}/api/PostMessage';
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final body = {
+      'conversationId': conversationId,
+      'contents': message.contents
+    };
+
+    sendPostRequest(uri, headers, jsonEncode(body));
   }
 
   /// Used by getAllConversations

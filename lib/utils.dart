@@ -63,3 +63,23 @@ import 'package:http/http.dart' as http;
     // Error or bad response, return nothing
     return [];
   }
+
+    /// Makes an Http post request to passed uri with passed headres. Uses passed function to convert the response to an object.
+  /// Catches all errors.
+  void sendPostRequest(String uri, Map<String, String> headers, String body) async{
+    // Create http request data
+    final url = Uri.parse(uri);
+
+    // Make the request and parse the data
+    try {
+      final response = await http.post(url, headers: headers, body: body);
+      print('Received response: ${response.statusCode}, ${response.body}');
+
+      // Proccess the response
+      if (response.statusCode != 200) {
+        print('Error: ${response.statusCode}, ${response.body}');
+      }
+    } catch (e) {
+      print('Request failed: $e');
+    }
+  }
