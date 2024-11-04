@@ -54,7 +54,7 @@ class MessageService {
       'contents': 'Hi!'
     };
 
-    Conversation conversation = sendPostRequestAndGetAsObject(convertJsonToConversation, uri, headers, jsonEncode(body));
+    Conversation conversation = await sendPostRequestAndGetAsObject(convertJsonToConversation, uri, headers, jsonEncode(body));
 
     return conversation;
   }
