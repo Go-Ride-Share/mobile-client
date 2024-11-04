@@ -92,13 +92,6 @@ class TripDetails extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
-              'Posted by: ${post.posterName}',
-              style: TextStyle(
-                fontSize: 14.0,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            Text(
               '${post.seatsAvailable} seats',
               style: TextStyle(
                 fontSize: 14.0,
