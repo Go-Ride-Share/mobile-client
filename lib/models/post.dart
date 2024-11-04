@@ -48,10 +48,11 @@ class Post {
     );
   }
 
-  /// Returns DateTime object parsed from passed string, current DateTime if string passed is null
+  /// Returns DateTime object parsed from passed string, current DateTime if string passed is null or an error happens
   static DateTime parseDate(String? dateTimeStr) {
     // Example of dateTimeStr
     // Tue Oct 15 2024 00:00:00 GMT-0500 (Central Daylight Time)
+    // If parsing as this fails, tries parsing as ISO8061 date
     const monthIndex = 1;
     const dayIndex = 2;
     const yearIndex = 3;
@@ -89,7 +90,14 @@ class Post {
 
         return DateTime(year, month, day, hour, minute, second);
       } catch (e) {
-        print('Error formatting date in post class: $e');
+        try {
+          // Try parsing the date like an ISO8601 
+          return DateTime.parse(dateTimeStr);
+        } catch (e2) {
+          print('Both date formatting methods returned an error:');
+          print('Read as react format: $e');
+          print('Read a ISO format: $e2');
+        }
       }
     }
     

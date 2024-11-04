@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
-import 'package:go_ride_sharing/pages/post_form_page.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/services/message_service.dart';
 import 'package:go_ride_sharing/models/conversation.dart';
