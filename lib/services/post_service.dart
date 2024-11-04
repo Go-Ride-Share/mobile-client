@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'caching_service.dart';
 import '../constants.dart';
+import 'package:go_ride_sharing/utils.dart';
 
 class PostService {
   CachingService cache = CachingService();
@@ -19,40 +20,17 @@ class PostService {
 
   Future<List<Post>> fetchProfilePosts() async {
     final userId = await userID;
-    final logicToken = await baseAccessToken;
-    final dbToken = await dbAccessToken;
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/GetPosts?userId=$userId');
+    final url = '${ENV.API_BASE_URL}/api/GetPosts?userId=$userId';
+    // logic token and db token can be null values if they are expired.
+    // We are ignoring the case of having to sign in again.
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
-    // logic token and db token can be null values if they are expired. We are ignoring the case of having to sign in again.
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${logicToken ?? ''}',
-      'X-Db-Token': dbToken ?? '',
-      'X-User-ID': userId ?? '',
-    };
+    List<Post> posts = (
+      await sendGetRequestAndGetAsList(convertJsonToPostList, url, headers)
+    ).cast<Post>();
 
-    try {
-      final response = await http.get(url, headers: headers);
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        // print('Data: $data');
-        List<Post> posts = (data as List).map((postJson) {
-          Post post = Post.fromJson(postJson);
-          post.authToken = "dummyAuthToken";
-          post.posterName = "dummyPosterName";
-          return post;
-        }).toList();
-        return posts;
-      } else {
-        print('Error: ${response.statusCode}, ${response.body}');
-      }
-    } catch (e) {
-      print('Request failed: $e');
-    }
-
-    return [];
+    return posts;
   }
 
   Future<void> createPost(Post post) async {
@@ -71,13 +49,8 @@ class PostService {
 
     final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
 
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await baseAccessToken ?? ''}',
-      'X-Db-Token': await dbAccessToken ?? '',
-      'X-User-ID': await userID ?? '',
-    };
-
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+ 
     // print('Post Data: $postData');
 
     try {
@@ -110,12 +83,7 @@ class PostService {
 
     final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
 
-    final headers = {
-      'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${await baseAccessToken ?? ''}',
-      'X-Db-Token': await dbAccessToken ?? '',
-      'X-User-ID': await userID ?? '',
-    };
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
     // print('Post Data: $postData');
 
@@ -131,4 +99,30 @@ class PostService {
       print('Request failed: $e');
     }
   }
+
+  Future<List<Post>> fetchAllPosts() async {
+    const url = '${ENV.API_AUTH_URL}/api/getAllPosts';
+    // logic token and db token can be null values if they are expired.
+    // We are ignoring the case of having to sign in again.
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+
+    List<Post> posts = (
+      await sendGetRequestAndGetAsList(convertJsonToPostList, url, headers)
+    ).cast<Post>();
+
+    return posts;
+  }
+
+  List<Post> convertJsonToPostList(String responseBody) {
+    final data = jsonDecode(responseBody);
+        List<Post> posts = (data as List).map((postJson) {
+          return Post.fromJson(postJson);
+        })
+        .where((post) => post.postName != "Load test")
+        .toList();
+
+    return posts;
+  }
+
+  
 }

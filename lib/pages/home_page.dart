@@ -3,6 +3,8 @@
 import 'package:flutter/material.dart';
 import 'profile_page.dart';
 import 'post_form_page.dart';
+import 'conversations_page.dart';
+import 'search_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -17,8 +19,8 @@ class _HomePageState extends State<HomePage> {
   final List<Widget?> _pages = [
     const ProfilePage(),
     null,
-    const Center(child: Text('Search Page')),
-    const Center(child: Text('Messages Page')),
+    SearchPage(),
+    ConversationsPage(),
   ];
 
   void _onTabTapped(int index) {
