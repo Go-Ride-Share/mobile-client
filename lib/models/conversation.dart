@@ -23,7 +23,6 @@ class Conversation {
       conversationPartner: json['user']['name'],
       conversationPartnerId: json['user']['userId'],
       messages: messages,
-      lastMessage: messages.isNotEmpty ? messages.last.contents : ''
     );
   }
 
