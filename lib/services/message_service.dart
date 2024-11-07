@@ -46,6 +46,15 @@ class MessageService {
     return messages.reversed.toList();  }
 
   Future<Conversation> createConversation(String? posterId) async {
+
+    // See if conversation already exists, if it does, return it. 
+    List<Conversation> convos = await getAllConversations();
+    for (Conversation convo in convos) {
+      if (convo.conversationPartnerId == posterId) {
+        return convo;   // Found the conversation
+      }
+    }
+    // Conversation doea not exist yet, create one
     // Create http request data
     const String uri = '${ENV.API_BASE_URL}/api/CreateConversation';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
