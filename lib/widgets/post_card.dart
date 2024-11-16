@@ -4,6 +4,7 @@ import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/services/message_service.dart';
 import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
+import 'package:go_ride_sharing/pages/post_form_page.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -12,13 +13,14 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // TODO: ON TAP, NAVIGATE TO POST DETAILS PAGE (something that shows more details with user details and map view)
     return GestureDetector(
-      // onTap: () {
-      //   // Navigator.push(
-      //   //   context,
-      //   //   MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
-      //   // );
-      // },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
+        );
+      },
       child: Card(
         color: Color(0xFFFFF9C4), // Light shade of yellow
         shape: RoundedRectangleBorder(

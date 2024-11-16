@@ -24,16 +24,9 @@ class _HomePageState extends State<HomePage> {
   ];
 
   void _onTabTapped(int index) {
-    if (index == 1) {
-      showModalBottomSheet(
-        context: context,
-        builder: (context) => const PostFormPage(),
-      );
-    } else {
       setState(() {
         _currentIndex = index;
       });
-    }
   }
 
   @override
@@ -55,7 +48,7 @@ class _HomePageState extends State<HomePage> {
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.add),
-            label: 'Create',
+            label: 'Post',
           ),
           BottomNavigationBarItem(
             icon: Icon(Icons.search),
