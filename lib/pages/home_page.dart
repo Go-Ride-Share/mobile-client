@@ -18,7 +18,7 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget?> _pages = [
     const ProfilePage(),
-    null,
+    const PostFormPage(),
     SearchPage(),
     ConversationsPage(),
   ];

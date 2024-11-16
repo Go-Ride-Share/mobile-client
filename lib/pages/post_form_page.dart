@@ -87,6 +87,7 @@ class _PostFormPageState extends State<PostFormPage> {
         price: double.parse(_priceController.text),
       );
 
+      // TODO: POTENTIALLY USELESS CODE, might need to rethink how Post Update works 
       // Create or update the post based on whether a post was passed
       if (widget.post == null) {
         await PostService().createPost(post);
@@ -99,7 +100,7 @@ class _PostFormPageState extends State<PostFormPage> {
 
   @override
   Widget build(BuildContext context) {
-    final title = widget.post == null ? 'Create Post' : 'Update Post';
+    final title = widget.post == null ? 'Create a Post' : 'Update Post';
 
     return Scaffold(
       appBar: AppBar(
@@ -175,62 +176,6 @@ class _PostFormPageState extends State<PostFormPage> {
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a price';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid decimal number';
-                  }
-                  return null;
-                },
-              ),
-              CustomTextFormField(
-                controller: _startLongitudeController,
-                labelText: 'Start Longitude',
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the start longitude';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid decimal number';
-                  }
-                  return null;
-                },
-              ),
-              CustomTextFormField(
-                controller: _startLatitudeController,
-                labelText: 'Start Latitude',
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the start latitude';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid decimal number';
-                  }
-                  return null;
-                },
-              ),
-              CustomTextFormField(
-                controller: _destinationLongitudeController,
-                labelText: 'Destination Longitude',
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the destination longitude';
-                  }
-                  if (double.tryParse(value) == null) {
-                    return 'Please enter a valid decimal number';
-                  }
-                  return null;
-                },
-              ),
-              CustomTextFormField(
-                controller: _destinationLatitudeController,
-                labelText: 'Destination Latitude',
-                keyboardType: TextInputType.number,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter the destination latitude';
                   }
                   if (double.tryParse(value) == null) {
                     return 'Please enter a valid decimal number';

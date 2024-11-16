@@ -23,6 +23,7 @@ dependencies:
   shared_preferences: any
   equatable: any
   image_picker: any
+  google_maps_flutter: ^2.10.0
 
 
 dev_dependencies:
