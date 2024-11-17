@@ -34,6 +34,7 @@ static final Map<String, String> RESPONSE_MSG = {
       // Send the email and hashed password to the account manager URL
       var url = Uri.parse('${ENV.API_AUTH_URL}/api/VerifyLoginCredentials');
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
+      var userDetails = await _get(Uri.parse('${ENV.API_BASE_URL}/api/GetUserDetails'), _defaultHeaders, {'email': email});
 
       // Handle the response
       if (response.statusCode == 200) {
@@ -41,6 +42,7 @@ static final Map<String, String> RESPONSE_MSG = {
         var userId = jsonDecode(response.body)['user_id'];
         var bearerToken = jsonDecode(response.body)['logic_token'];
         var dbToken = jsonDecode(response.body)['db_token'];
+        var userName = jsonDecode(response.body)['name'];
         
         // Cache the token with 6 hour expiration
         await cache.saveData(ENV.CACHE_USER_ID_KEY, userId, const Duration(hours: ENV.TOKEN_EXPIRATION_DURATION));

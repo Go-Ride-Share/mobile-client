@@ -5,6 +5,7 @@ import 'pages/sign_in_page.dart';  // Import the SignInPage widget
 import 'pages/sign_up_page.dart';  // Import the SignUpPage widget
 import '../pages/home_page.dart'; // Import the HomePage widget
 import 'services/caching_service.dart'; // Import the CacheManager class
+import 'theme.dart'; // Import the theme file
 void main() {
   runApp(MyApp());
 }
@@ -24,7 +25,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Flutter Demo',
       theme: ThemeData(
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: notYellow),
         useMaterial3: true,
       ),
       initialRoute: '/',
