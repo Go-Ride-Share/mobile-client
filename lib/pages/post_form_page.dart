@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
-
+import 'package:go_ride_sharing/widgets/map_window.dart';
 class PostFormPage extends StatefulWidget {
   final Post? post;
 
@@ -87,7 +87,7 @@ class _PostFormPageState extends State<PostFormPage> {
         price: double.parse(_priceController.text),
       );
 
-      // TODO: POTENTIALLY USELESS CODE, might need to rethink how Post Update works 
+      // TODO: POTENTIALLY USELESS CODE, might need to rethink how Post Update works
       // Create or update the post based on whether a post was passed
       if (widget.post == null) {
         await PostService().createPost(post);
@@ -183,6 +183,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              MapWindow(),
               const SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _submitPost,
