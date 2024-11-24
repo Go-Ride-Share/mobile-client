@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/filter_button.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/widgets/post_card.dart';
@@ -33,21 +34,21 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('My Listings'),
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(30.0),
+          child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: FilterButtonRow(
               selectedFilters: _selectedFilters,
               onFilterChanged: _updateFilter,
             ),
           ),
-          Expanded(
+        ),
+      ),
+      body: Center(
+        child: Expanded(
             child: PostList(filters: _selectedFilters),
           ),
-        ],
       ),
     );
   }
