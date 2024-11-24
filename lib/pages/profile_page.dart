@@ -31,7 +31,9 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
+      appBar: AppBar(
+        title: const Text('My Listings'),
+      ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -70,7 +72,8 @@ class PostList extends StatelessWidget {
         } else {
           final now = DateTime.now();
           final filteredPosts = snapshot.data!.where((post) {
-            final departureDate = DateTime(post.departureDate.year, post.departureDate.month, post.departureDate.day);
+            final departureDate = DateTime(post.departureDate.year,
+                post.departureDate.month, post.departureDate.day);
             final today = DateTime(now.year, now.month, now.day);
             return filters.any((filter) {
               switch (filter) {
@@ -132,74 +135,39 @@ class FilterButtonRow extends StatelessWidget {
   }
 }
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
+// class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
+//   const CustomAppBar({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(1.0),
-      child: AppBar(
-        flexibleSpace: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  WelcomeHeader(),
-                  Subtitle(),
-                ],
-              ),
-              CircleAvatar(
-                radius: 35,
-                backgroundImage: AssetImage('assets/images/profile_image.png'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
+//   @override
+//   Widget build(BuildContext context) {
+//     return PreferredSize(
+//       // preferredSize: const Size.fromHeight(1.0),
+//       child: AppBar(
+//         flexibleSpace: const Padding(
+//           padding: EdgeInsets.all(16.0),
+//           child: Row(
+//             mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//             crossAxisAlignment: CrossAxisAlignment.start,
+//             children: [
+//               Column(
+//                 mainAxisAlignment: MainAxisAlignment.start,
+//                 crossAxisAlignment: CrossAxisAlignment.start,
+//                 children: [
+//                   WelcomeHeader(),
+//                   Subtitle(),
+//                 ],
+//               ),
+//               CircleAvatar(
+//                 radius: 35,
+//                 backgroundImage: AssetImage('assets/images/profile_image.png'),
+//               ),
+//             ],
+//           ),
+//         ),
+//       ),
+//     );
+//   }
 
-  @override
-  Size get preferredSize => const Size.fromHeight(100.0);
-}
-
-class WelcomeHeader extends StatelessWidget {
-  const WelcomeHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: RichText(
-        text: const TextSpan(
-          children: [
-            TextSpan(
-              text: 'Welcome back, '
-            ),
-            TextSpan(
-              text: 'John!',
-            ),
-          ],
-          style: TextStyle(fontSize: 30, color: Colors.black),
-        ),
-      ),
-    );
-  }
-}
-
-class Subtitle extends StatelessWidget {
-  const Subtitle({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'See all your trips',
-      style: TextStyle(fontSize: 20),
-    );
-  }
-}
+//   @override
+//   Size get preferredSize => const Size.fromHeight(100.0);
+// }
