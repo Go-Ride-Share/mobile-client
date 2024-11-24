@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_ride_sharing/theme.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import '../services/validation_service.dart';
@@ -116,6 +117,13 @@ class SignUpPageState extends State<SignUpPage> {
               else
                 const SizedBox(height: 20),
               ElevatedButton(
+                style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
                 onPressed: () async {
                 if(_formKey.currentState!.validate()) {
                   // bundle up all the data in a Map<String, dynamic>

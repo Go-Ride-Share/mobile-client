@@ -84,12 +84,13 @@ class _MapWindowState extends State<MapWindow> {
           top: 20,
           child: FilledButton.icon(
             style: FilledButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 10, vertical: 15),
+              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
               backgroundColor: notYellow,
               foregroundColor: notBlack,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(10),
               ),
+              shadowColor: notBlack
             ),
             icon: Icon(Icons.pin_drop),
             label: Text("Choose Locations"),

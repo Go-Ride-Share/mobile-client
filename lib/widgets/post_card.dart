@@ -149,12 +149,13 @@ class TripDetails extends StatelessWidget {
                     ),
                   );
                 },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: notYellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
+                style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
                 child: Text('Contact'),
               );
             } else {

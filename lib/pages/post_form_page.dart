@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
+import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/map_window.dart';
+
 class PostFormPage extends StatefulWidget {
   final Post? post;
 
@@ -33,12 +35,15 @@ class _PostFormPageState extends State<PostFormPage> {
       _postNameController.text = widget.post!.postName;
       _postDescriptionController.text = widget.post!.description;
       _seatsAvailableController.text = widget.post!.seatsAvailable.toString();
-      _departureDateController.text = widget.post!.departureDate.toLocal().toString().split(' ')[0];
+      _departureDateController.text =
+          widget.post!.departureDate.toLocal().toString().split(' ')[0];
       _priceController.text = widget.post!.price.toString();
       _startLongitudeController.text = widget.post!.startLongitude.toString();
       _startLatitudeController.text = widget.post!.startLatitude.toString();
-      _destinationLongitudeController.text = widget.post!.destinationLongitude.toString();
-      _destinationLatitudeController.text = widget.post!.destinationLatitude.toString();
+      _destinationLongitudeController.text =
+          widget.post!.destinationLongitude.toString();
+      _destinationLatitudeController.text =
+          widget.post!.destinationLatitude.toString();
     }
   }
 
@@ -79,7 +84,8 @@ class _PostFormPageState extends State<PostFormPage> {
         startLatitude: double.parse(_startLatitudeController.text),
         startLongitude: double.parse(_startLongitudeController.text),
         destinationLatitude: double.parse(_destinationLatitudeController.text),
-        destinationLongitude: double.parse(_destinationLongitudeController.text),
+        destinationLongitude:
+            double.parse(_destinationLongitudeController.text),
         description: _postDescriptionController.text,
         seatsAvailable: int.parse(_seatsAvailableController.text),
         postName: _postNameController.text,
@@ -172,7 +178,8 @@ class _PostFormPageState extends State<PostFormPage> {
               CustomTextFormField(
                 controller: _priceController,
                 labelText: 'Price',
-                keyboardType: const TextInputType.numberWithOptions(decimal: true),
+                keyboardType:
+                    const TextInputType.numberWithOptions(decimal: true),
                 validator: (value) {
                   if (value == null || value.isEmpty) {
                     return 'Please enter a price';
@@ -186,6 +193,13 @@ class _PostFormPageState extends State<PostFormPage> {
               MapWindow(),
               const SizedBox(height: 20),
               ElevatedButton(
+                style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
                 onPressed: _submitPost,
                 child: Text(widget.post == null ? 'Post' : 'Update'),
               ),
@@ -195,7 +209,6 @@ class _PostFormPageState extends State<PostFormPage> {
       ),
     );
   }
-
 }
 
 class CustomTextFormField extends StatelessWidget {
