@@ -23,7 +23,7 @@ class MapWindow extends StatefulWidget {
 class _MapWindowState extends State<MapWindow> {
   CameraPosition _cameraPosition = CameraPosition(
     target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 50.4746,
+    zoom: 20.4746,
   );
 
   @override
@@ -34,11 +34,20 @@ class _MapWindowState extends State<MapWindow> {
 
   void _zoomToFitMarkers() async {
     GoogleMapController controller = await _controller.future;
+    print(await controller.getLatLng(ScreenCoordinate(x: 0, y: 0)));
     LatLngBounds bounds = LatLngBounds(
       southwest: LatLng(37.42796133580664, -122.085749655962),
       northeast: LatLng(37.43296265331129, -122.08832357078792),
     );
-    CameraUpdate cameraUpdate = CameraUpdate.newLatLngBounds(bounds, 10);
+    CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
+      CameraPosition(
+        target: LatLng(
+          (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
+          (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
+        ),
+        zoom: 14,
+      ),
+    );
     controller.animateCamera(cameraUpdate);
   }
 
@@ -50,36 +59,36 @@ class _MapWindowState extends State<MapWindow> {
       alignment: Alignment.center,
       children: <Widget>[
         Card(
-          clipBehavior: Clip.hardEdge,
-          child: SizedBox(
+            clipBehavior: Clip.hardEdge,
+            child: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2,
-              child: IgnorePointer(
-                child: GoogleMap(
-                  initialCameraPosition: _cameraPosition,
-                  buildingsEnabled: true,
-                  compassEnabled: true,
-                  myLocationEnabled: true,
-                  markers: {
-                    Marker(
-                      icon: BitmapDescriptor.defaultMarkerWithHue(
-                          BitmapDescriptor.hueGreen),
-                      infoWindow: InfoWindow(title: 'Origin'),
-                      markerId: MarkerId('1'),
-                      position: LatLng(37.42796133580664, -122.085749655962),
-                    ),
-                    Marker(
-                      markerId: MarkerId('2'),
-                      infoWindow: InfoWindow(title: 'Destination'),
-                      position: LatLng(37.43296265331129, -122.08832357078792),
-                    ),
-                  },
-                  onMapCreated: (GoogleMapController controller) {
-                    _controller.complete(controller);
-                  },
-                ),
-              )),
-        ),
+              child: GoogleMap(
+                initialCameraPosition: _cameraPosition,
+                buildingsEnabled: true,
+                compassEnabled: true,
+                myLocationEnabled: true,
+                myLocationButtonEnabled: true,
+                fortyFiveDegreeImageryEnabled: true,
+                markers: {
+                  Marker(
+                    icon: BitmapDescriptor.defaultMarkerWithHue(
+                        BitmapDescriptor.hueGreen),
+                    infoWindow: InfoWindow(title: 'Origin'),
+                    markerId: MarkerId('1'),
+                    position: LatLng(37.42796133580664, -122.085749655962),
+                  ),
+                  Marker(
+                    markerId: MarkerId('2'),
+                    infoWindow: InfoWindow(title: 'Destination'),
+                    position: LatLng(37.43296265331129, -122.08832357078792),
+                  ),
+                },
+                onMapCreated: (GoogleMapController controller) {
+                  _controller.complete(controller);
+                },
+              ),
+            )),
         Positioned(
           top: 20,
           child: FilledButton.icon(
@@ -90,7 +99,8 @@ class _MapWindowState extends State<MapWindow> {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(10),
               ),
-              shadowColor: notBlack
+              shadowColor: notBlack,
+              elevation: 10, // Increase elevation for a more prominent shadow
             ),
             icon: Icon(Icons.pin_drop),
             label: Text("Choose Locations"),
