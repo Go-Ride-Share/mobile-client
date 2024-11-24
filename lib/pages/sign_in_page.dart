@@ -54,6 +54,13 @@ class SignInPageState extends State<SignInPage> {
             else
               const SizedBox(height: 20),
             ElevatedButton(
+              style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
               onPressed: () async {
                 if(_formKey.currentState!.validate()) {
                   final String response = await AuthService.signIn(_emailController.text, _passwordController.text);
