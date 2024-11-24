@@ -129,7 +129,7 @@ class SignUpPageState extends State<SignUpPage> {
                   };
                   final String response = await AuthService.signUp(formData);
                   if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/home');
                   } else {
                     if (mounted) {
                         setState(() {

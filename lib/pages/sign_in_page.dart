@@ -57,7 +57,7 @@ class SignInPageState extends State<SignInPage> {
                 if(_formKey.currentState!.validate()) {
                   final String response = await AuthService.signIn(_emailController.text, _passwordController.text);
                   if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/home');
                   } else {
                     if (mounted) {
                         setState(() {
