@@ -17,20 +17,20 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   _MapPageState();
+  GoogleMapController? mapController;
+
   static const String ORIGIN = "Origin";
   static const String DESTINATION = "Destination";
-
-  // bool showBanner = false;
-  GoogleMapController? mapController;
   bool originChosen = false;
   bool destinationChosen = false;
-  Map<String, String> _addressData = {
+  static final Map<String, String> _addressData = {
     ORIGIN: 'Loading...',
     DESTINATION: 'Loading...',
   };
 
   //TODO: make this into a function that takes lat longs existing and returns center, otherwise returns winnipeg default.
-  static const LatLng center = LatLng(-33.86711, 151.1947171);
+  static const LatLng center = LatLng(49.8951, -97.1384);
+
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
   LatLng? markerPosition;
@@ -39,11 +39,22 @@ class _MapPageState extends State<MapPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
+          onPressed: () {
+            // only return with markers if both origin and destination are chosen
+            if(destinationChosen && originChosen){
+              Navigator.pop(context, markers);
+            }else{
+              Navigator.pop(context);
+            } 
+          },
+        ),
         title: const Text('Select Coordinates'),
       ),
       body: GoogleMap(
         onMapCreated: onMapCreated,
-        initialCameraPosition: const CameraPosition(target: center, zoom: 14.4746),
+        initialCameraPosition: const CameraPosition(target: center, zoom: 10.4746),
         buildingsEnabled: true,
         compassEnabled: true,
         markers: Set<Marker>.of(markers.values),
@@ -74,13 +85,13 @@ class _MapPageState extends State<MapPage> {
   Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
     setState(() {
       //reset the origin and destination flags if the marker is dragged, so it can be drawn again
-      if (markerId.value == _addressData.keys.elementAt(0)) {
+      if (markerId.value == ORIGIN) {
         originChosen = false;
-      } else if (markerId.value == _addressData.keys.elementAt(1)) {
+      } else if (markerId.value == DESTINATION) {
         destinationChosen = false;
       }
-      _addMarker(newPosition);
     });
+    _addMarker(newPosition);
     _updateMarkerInfo(markerId, newPosition);
   }
 
@@ -88,11 +99,11 @@ class _MapPageState extends State<MapPage> {
     String markerIdVal;
     BitmapDescriptor markerIcon;
     if (!originChosen) {
-      markerIdVal = _addressData.keys.elementAt(0);
+      markerIdVal = ORIGIN;
       markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
       originChosen = true;
     }else if(!destinationChosen){
-      markerIdVal = _addressData.keys.elementAt(1);
+      markerIdVal = DESTINATION;
       markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
       destinationChosen = true;
     }else{
@@ -105,7 +116,7 @@ class _MapPageState extends State<MapPage> {
       position: location,
       infoWindow: InfoWindow(
         title: markerIdVal,
-        snippet: 'Loading...',
+        snippet: _addressData[markerIdVal],
         onTap: () =>_removeMarker(markerId),
       ),
       icon: markerIcon,
@@ -121,9 +132,9 @@ class _MapPageState extends State<MapPage> {
 
   void _removeMarker(MarkerId markerId) {
     setState(() {
-      if (markerId.value == "origin") {
+      if (markerId.value == ORIGIN) {
         originChosen = false;
-      } else if (markerId.value == "destination") {
+      } else if (markerId.value == DESTINATION) {
         destinationChosen = false;
       }
       markers.remove(markerId);
@@ -139,34 +150,34 @@ class _MapPageState extends State<MapPage> {
   }
 
   Future<void> _updateMarkerInfo(MarkerId markerId, LatLng position) async {
-    String place = await _getPlace(position);
+    await _findPlaceName(markerId, position);
     setState(() {
       final Marker marker = markers[markerId]!;
       markers[markerId] = marker.copyWith(
         infoWindowParam: marker.infoWindow.copyWith(
-          snippetParam: place,
+          snippetParam: _addressData[markerId.value]!,
         ),
       );
     });
   }
 
-  Future<String> _getPlace(LatLng position) async {
-  List<Placemark> newPlace = await placemarkFromCoordinates(position.latitude, position.longitude);
-  print("I am here");
+  Future<void> _findPlaceName(MarkerId markerId, LatLng position) async {
+    List<Placemark> newPlace = await placemarkFromCoordinates(position.latitude, position.longitude);
+    print(newPlace);
+    // this is all you need
+    Placemark placeMark  = newPlace[0]; 
+    String? streetName = placeMark.street;
+    String? locality = placeMark.locality;
+    String? administrativeArea = placeMark.administrativeArea;
 
-  print(newPlace);
-  // this is all you need
-  Placemark placeMark  = newPlace[0]; 
-  String? name = placeMark.name;
-  String? locality = placeMark.locality;
-  String? administrativeArea = placeMark.administrativeArea;
-  String? address = "$name, $locality, $administrativeArea";
-  print("ToString: " + newPlace[0].toString());
-  // setState(() {
-  //   _address = address; // update _address
-  // });
-  return address;
-}
+    if (streetName == locality) {
+      streetName = placeMark.name;    // for remote locations, google gives same street and locality names. So we read more generic name for uniqueness.
+    }
+    // print("ToString: " + newPlace[0].toString());
+    setState(() {
+      _addressData[markerId.value] = "$streetName, $locality, $administrativeArea"; // update _address
+    });
+  }
 
   @override
   void dispose() {
