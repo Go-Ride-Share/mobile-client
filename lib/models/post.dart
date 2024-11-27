@@ -5,6 +5,8 @@ class Post {
   double originLng;
   double destinationLat;
   double destinationLng;
+  String originName;
+  String destinationName;
   String description;
   int seatsAvailable;
   String postName;
@@ -20,6 +22,8 @@ class Post {
     required this.originLng,
     required this.destinationLat,
     required this.destinationLng,
+    required this.originName,
+    required this.destinationName,
     required this.description,
     required this.seatsAvailable,
     required this.postName,
@@ -38,6 +42,8 @@ class Post {
       originLng: (json['originLng'] as num).toDouble(),
       destinationLat: (json['destinationLat'] as num).toDouble(),
       destinationLng: (json['destinationLng'] as num).toDouble(),
+      originName: json['originName'],
+      destinationName: json['destinationName'],
       description: json['description'],
       seatsAvailable: json['seatsAvailable'],
       postName: json['name'],
@@ -47,6 +53,8 @@ class Post {
       price: (json['price'] as num).toDouble(),
     );
   }
+
+  // get origin => null;
 
   /// Returns DateTime object parsed from passed string, current DateTime if string passed is null or an error happens
   static DateTime parseDate(String? dateTimeStr) {

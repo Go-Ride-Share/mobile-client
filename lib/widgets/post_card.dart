@@ -97,20 +97,64 @@ class TripDetails extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          '(${post.originLat}, ${post.originLng}) to (${post.destinationLat}, ${post.destinationLng})',
-          style: const TextStyle(
-            fontSize: 14.0,
+        RichText(
+          text: TextSpan(
+            text: 'Origin: ',
+            style: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            children: [
+              TextSpan(
+                text: post.originName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
+        ),
+        const SizedBox(height: 5.0),
+        RichText(
+          text: TextSpan(
+            text: 'Destination: ',
+            style: const TextStyle(
+              fontSize: 14.0,
+              fontWeight: FontWeight.bold,
+              color: Colors.black,
+            ),
+            children: [
+              TextSpan(
+                text: post.destinationName,
+                style: const TextStyle(
+                  fontWeight: FontWeight.normal,
+                ),
+              ),
+            ],
           ),
         ),
         const SizedBox(height: 5.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            Text(
-              'Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
-              style: const TextStyle(
-                fontSize: 14.0,
+            RichText(
+              text: TextSpan(
+                text: 'Date: ',
+                style: const TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+                children: [
+                  TextSpan(
+                    text: post.departureDate.toLocal().toString().split(' ')[0],
+                    style: const TextStyle(
+                      fontSize: 14.0,
+                      fontWeight: FontWeight.normal,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

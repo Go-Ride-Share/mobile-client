@@ -4,6 +4,7 @@ import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/map_window.dart';
 import 'package:go_ride_sharing/pages/map_page.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class PostFormPage extends StatefulWidget {
   final Post? post;
@@ -23,10 +24,11 @@ class _PostFormPageState extends State<PostFormPage> {
   final _seatsAvailableController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _priceController = TextEditingController();
-  final _originLngController = TextEditingController();
-  final _originLatController = TextEditingController();
-  final _destinationLngController = TextEditingController();
-  final _destinationLatController = TextEditingController();
+
+  LatLng? origin;
+  LatLng? destination;
+  String? originName;
+  String? destinationName;
 
   @override
   void initState() {
@@ -39,12 +41,8 @@ class _PostFormPageState extends State<PostFormPage> {
       _departureDateController.text =
           widget.post!.departureDate.toLocal().toString().split(' ')[0];
       _priceController.text = widget.post!.price.toString();
-      _originLngController.text = widget.post!.originLng.toString();
-      _originLatController.text = widget.post!.originLat.toString();
-      _destinationLngController.text =
-          widget.post!.destinationLng.toString();
-      _destinationLatController.text =
-          widget.post!.destinationLat.toString();
+
+      //TODO: POPULATE THE MARKERS SOMEHOW HERE
     }
   }
 
@@ -56,10 +54,6 @@ class _PostFormPageState extends State<PostFormPage> {
     _seatsAvailableController.dispose();
     _departureDateController.dispose();
     _priceController.dispose();
-    _originLngController.dispose();
-    _originLatController.dispose();
-    _destinationLngController.dispose();
-    _destinationLatController.dispose();
     super.dispose();
   }
 
@@ -82,11 +76,12 @@ class _PostFormPageState extends State<PostFormPage> {
   Future<void> _submitPost() async {
     if (_formKey.currentState!.validate()) {
       final post = Post(
-        originLat: double.parse(_originLatController.text),
-        originLng: double.parse(_originLngController.text),
-        destinationLat: double.parse(_destinationLatController.text),
-        destinationLng:
-            double.parse(_destinationLngController.text),
+        originLat: origin!.latitude,
+        originLng: origin!.longitude,
+        destinationLat: destination!.latitude,
+        destinationLng: destination!.longitude,
+        originName: originName!,
+        destinationName: destinationName!,
         description: _postDescriptionController.text,
         seatsAvailable: int.parse(_seatsAvailableController.text),
         postName: _postNameController.text,
@@ -103,6 +98,26 @@ class _PostFormPageState extends State<PostFormPage> {
       }
       Navigator.pop(context);
     }
+  }
+
+  Future<void> _navigateAndDisplayMap(BuildContext context) async {
+    // Navigator.push returns a Future that completes after calling
+    // Navigator.pop on the Selection Screen.
+    Map<MarkerId, Marker> result = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => MapPage()),
+    );
+
+    // When a BuildContext is used from a StatefulWidget, the mounted property
+    // must be checked after an asynchronous gap.
+    if (!context.mounted) return;
+
+    setState(() {
+      origin = result.values.first.position;
+      destination = result.values.last.position;
+      originName = result.values.first.infoWindow.snippet;
+      destinationName = result.values.last.infoWindow.snippet;
+    });
   }
 
   @override
@@ -194,12 +209,13 @@ class _PostFormPageState extends State<PostFormPage> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  MapWindow(),  //TODO: param are the coordinates
+                  MapWindow(), //TODO: param are the coordinates
                   Positioned(
                     top: 20,
                     child: FilledButton.icon(
                       style: FilledButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 15, vertical: 15),
                         backgroundColor: notYellow,
                         foregroundColor: notBlack,
                         shape: RoundedRectangleBorder(
@@ -212,12 +228,7 @@ class _PostFormPageState extends State<PostFormPage> {
                       icon: const Icon(Icons.pin_drop),
                       label: const Text("Choose Locations"),
                       onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => MapPage(),
-                          ),
-                        );
+                        _navigateAndDisplayMap(context);
                       },
                     ),
                   ),
