@@ -33,7 +33,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('My Listings'),
+        title: const Text('My Posts'),
         bottom: PreferredSize(
           preferredSize: const Size.fromHeight(30.0),
           child: Padding(
