@@ -1,10 +1,10 @@
 class Post {
   String? postId;
   String? authToken;
-  double startLatitude;
-  double startLongitude;
-  double destinationLatitude;
-  double destinationLongitude;
+  double originLat;
+  double originLng;
+  double destinationLat;
+  double destinationLng;
   String description;
   int seatsAvailable;
   String postName;
@@ -16,10 +16,10 @@ class Post {
   Post({
     this.postId,
     this.authToken,
-    required this.startLatitude,
-    required this.startLongitude,
-    required this.destinationLatitude,
-    required this.destinationLongitude,
+    required this.originLat,
+    required this.originLng,
+    required this.destinationLat,
+    required this.destinationLng,
     required this.description,
     required this.seatsAvailable,
     required this.postName,
@@ -34,10 +34,10 @@ class Post {
     return Post(
       postId: json['postId'],
       authToken: json['authToken'],
-      startLatitude: (json['originLat'] as num).toDouble(),
-      startLongitude: (json['originLng'] as num).toDouble(),
-      destinationLatitude: (json['destinationLat'] as num).toDouble(),
-      destinationLongitude: (json['destinationLng'] as num).toDouble(),
+      originLat: (json['originLat'] as num).toDouble(),
+      originLng: (json['originLng'] as num).toDouble(),
+      destinationLat: (json['destinationLat'] as num).toDouble(),
+      destinationLng: (json['destinationLng'] as num).toDouble(),
       description: json['description'],
       seatsAvailable: json['seatsAvailable'],
       postName: json['name'],

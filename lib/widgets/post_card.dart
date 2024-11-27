@@ -59,26 +59,28 @@ class PostInformation extends StatelessWidget {
           radius: 30.0,
         ),
         SizedBox(width: 10.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              post.postName,
-              style: TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16.0,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                post.postName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              overflow: TextOverflow.ellipsis,
-            ),
-            SizedBox(height: 5.0),
-            Text(
-              post.description,
-              style: TextStyle(
-              fontSize: 14.0,
+              SizedBox(height: 5.0),
+              Text(
+                post.description,
+                style: TextStyle(
+                  fontSize: 14.0,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
+            ],
+          ),
         ),
       ],
     );
@@ -94,9 +96,9 @@ class TripDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [        
+      children: [
         Text(
-          '(${post.startLatitude}, ${post.startLongitude}) to (${post.destinationLatitude}, ${post.destinationLongitude})',
+          '(${post.originLat}, ${post.originLng}) to (${post.destinationLat}, ${post.destinationLng})',
           style: const TextStyle(
             fontSize: 14.0,
           ),
@@ -107,12 +109,6 @@ class TripDetails extends StatelessWidget {
           children: [
             Text(
               'Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
-              style: const TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-            Text(
-              'Departing at: ${post.departureDate.toLocal().toString().split(' ')[1].substring(0, 5)}',
               style: const TextStyle(
                 fontSize: 14.0,
               ),
