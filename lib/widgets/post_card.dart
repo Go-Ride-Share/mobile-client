@@ -1,3 +1,5 @@
+// ignore_for_file: prefer_const_constructors, prefer_const_constructors_in_immutables
+
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
@@ -6,6 +8,7 @@ import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
 import 'package:go_ride_sharing/pages/post_form_page.dart';
 import 'package:go_ride_sharing/theme.dart';
+
 class PostCard extends StatelessWidget {
   final Post post;
 
@@ -22,9 +25,9 @@ class PostCard extends StatelessWidget {
         );
       },
       child: Card(
-        color: Color(0xFFFFF9C4), // Light shade of yellow
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: notYellow, width: 2.0),
         ),
         child: Padding(
           padding: const EdgeInsets.all(10.0),
@@ -45,7 +48,7 @@ class PostCard extends StatelessWidget {
 class PostInformation extends StatelessWidget {
   final Post post;
 
-  const PostInformation({Key? key, required this.post}) : super(key: key);
+  PostInformation({Key? key, required this.post}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -62,16 +65,18 @@ class PostInformation extends StatelessWidget {
             Text(
               post.postName,
               style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+              fontWeight: FontWeight.bold,
+              fontSize: 16.0,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
             SizedBox(height: 5.0),
             Text(
               post.description,
               style: TextStyle(
-                fontSize: 14.0,
+              fontSize: 14.0,
               ),
+              overflow: TextOverflow.ellipsis,
             ),
           ],
         ),
@@ -89,50 +94,50 @@ class TripDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '${post.seatsAvailable} seats',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-          ],
+      children: [        
+        Text(
+          '(${post.startLatitude}, ${post.startLongitude}) to (${post.destinationLatitude}, ${post.destinationLongitude})',
+          style: const TextStyle(
+            fontSize: 14.0,
+          ),
         ),
-        SizedBox(height: 5.0),
+        const SizedBox(height: 5.0),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
             Text(
               'Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
-              style: TextStyle(
+              style: const TextStyle(
                 fontSize: 14.0,
               ),
             ),
             Text(
-              'Time: ${post.departureDate.toLocal().toString().split(' ')[1].substring(0, 5)}',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-            Text(
-              '\$${post.price.toStringAsFixed(2)}',
-              style: TextStyle(
+              'Departing at: ${post.departureDate.toLocal().toString().split(' ')[1].substring(0, 5)}',
+              style: const TextStyle(
                 fontSize: 14.0,
               ),
             ),
           ],
         ),
-        SizedBox(height: 5.0),
-        Text(
-          '(${post.startLatitude}, ${post.startLongitude}) to (${post.destinationLatitude}, ${post.destinationLongitude})',
-          style: TextStyle(
-            fontSize: 14.0,
-          ),
+        const SizedBox(height: 5.0),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Text(
+              'Max ${post.seatsAvailable} passengers',
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+            Text(
+              '\$${post.price.toStringAsFixed(2)}',
+              style: const TextStyle(
+                fontSize: 14.0,
+              ),
+            ),
+          ],
         ),
-        SizedBox(height: 10.0),
+        const SizedBox(height: 10.0),
         FutureBuilder<String?>(
           future: PostService().userID,
           builder: (context, snapshot) {
@@ -141,11 +146,13 @@ class TripDetails extends StatelessWidget {
             } else if (snapshot.hasData && snapshot.data != post.posterId) {
               return ElevatedButton(
                 onPressed: () async {
-                  Conversation conversation = await MessageService().createConversation(post.posterId);
+                  Conversation conversation =
+                      await MessageService().createConversation(post.posterId);
                   Navigator.push(
                     context,
                     MaterialPageRoute(
-                      builder: (context) => ConversationDetailPage(conversation: conversation),
+                      builder: (context) =>
+                          ConversationDetailPage(conversation: conversation),
                     ),
                   );
                 },
@@ -156,10 +163,10 @@ class TripDetails extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                     shadowColor: notBlack),
-                child: Text('Contact'),
+                child: const Text('Contact'),
               );
             } else {
-              return SizedBox.shrink();
+              return const SizedBox.shrink();
             }
           },
         ),
