@@ -17,14 +17,19 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   _MapPageState();
-
-  String _address = ""; // create this variable
+  static const String ORIGIN = "Origin";
+  static const String DESTINATION = "Destination";
 
   // bool showBanner = false;
   GoogleMapController? mapController;
   bool originChosen = false;
   bool destinationChosen = false;
+  Map<String, String> _addressData = {
+    ORIGIN: 'Loading...',
+    DESTINATION: 'Loading...',
+  };
 
+  //TODO: make this into a function that takes lat longs existing and returns center, otherwise returns winnipeg default.
   static const LatLng center = LatLng(-33.86711, 151.1947171);
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
@@ -66,26 +71,15 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<void> _onMarkerDrag(MarkerId markerId, LatLng newPosition) async {
-    setState(() {
-      // if (markerId.value == "origin") {
-      //   originChosen = false;
-      // } else if (markerId.value == "destination") {
-      //   destinationChosen = false;
-      // }
-      markerPosition = newPosition;
-    });
-    // _updateMarkerInfo(markerId, newPosition);
-  }
-
   Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
     setState(() {
-      if (markerId.value == "origin") {
+      //reset the origin and destination flags if the marker is dragged, so it can be drawn again
+      if (markerId.value == _addressData.keys.elementAt(0)) {
         originChosen = false;
-      } else if (markerId.value == "destination") {
+      } else if (markerId.value == _addressData.keys.elementAt(1)) {
         destinationChosen = false;
       }
-      markerPosition = newPosition;
+      _addMarker(newPosition);
     });
     _updateMarkerInfo(markerId, newPosition);
   }
@@ -94,11 +88,11 @@ class _MapPageState extends State<MapPage> {
     String markerIdVal;
     BitmapDescriptor markerIcon;
     if (!originChosen) {
-      markerIdVal = 'origin';
+      markerIdVal = _addressData.keys.elementAt(0);
       markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
       originChosen = true;
     }else if(!destinationChosen){
-      markerIdVal = 'destination';
+      markerIdVal = _addressData.keys.elementAt(1);
       markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
       destinationChosen = true;
     }else{
@@ -115,8 +109,7 @@ class _MapPageState extends State<MapPage> {
         onTap: () =>_removeMarker(markerId),
       ),
       icon: markerIcon,
-      onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
-      // onDragEnd: (LatLng newPosition) => _onMarkerDragEnd(markerId, newPosition),
+      onDragEnd: (LatLng newPosition) => _onMarkerDragEnd(markerId, newPosition),
       draggable: true,
     );
 
@@ -165,15 +158,10 @@ class _MapPageState extends State<MapPage> {
   // this is all you need
   Placemark placeMark  = newPlace[0]; 
   String? name = placeMark.name;
-  String? subLocality = placeMark.subLocality;
   String? locality = placeMark.locality;
   String? administrativeArea = placeMark.administrativeArea;
-  String? postalCode = placeMark.postalCode;
-  String? country = placeMark.country;
-  String? address = "$name, $subLocality, $locality, $administrativeArea $postalCode, $country";
-  
-  print(address);
-
+  String? address = "$name, $locality, $administrativeArea";
+  print("ToString: " + newPlace[0].toString());
   // setState(() {
   //   _address = address; // update _address
   // });
