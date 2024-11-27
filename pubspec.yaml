@@ -24,6 +24,7 @@ dependencies:
   equatable: any
   image_picker: any
   google_maps_flutter: ^2.10.0
+  geocoding: ^3.0.0
 
 
 dev_dependencies:
