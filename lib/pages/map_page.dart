@@ -1,5 +1,4 @@
-import 'dart:math';
-
+import 'package:geocoding/geocoding.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
@@ -19,25 +18,17 @@ class MapPage extends StatefulWidget {
 class _MapPageState extends State<MapPage> {
   _MapPageState();
 
-  // bool showBanner = false;
-  bool choseOrigin = false;
-  bool choseDestination = false;
+  String _address = ""; // create this variable
 
+  // bool showBanner = false;
   GoogleMapController? mapController;
-  LatLng? _lastTap;
-  LatLng? _lastLongPress;
+  bool originChosen = false;
+  bool destinationChosen = false;
 
   static const LatLng center = LatLng(-33.86711, 151.1947171);
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
   MarkerId? selectedMarker;
-  int _markerIdCounter = 1;
   LatLng? markerPosition;
-
-  // TODO: eventually get camera position from the parent object using a function
-  static const CameraPosition _kGooglePlex = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 14.4746,
-  );
 
   @override
   Widget build(BuildContext context) {
@@ -47,27 +38,11 @@ class _MapPageState extends State<MapPage> {
       ),
       body: GoogleMap(
         onMapCreated: onMapCreated,
-        initialCameraPosition: _kGooglePlex,
+        initialCameraPosition: const CameraPosition(target: center, zoom: 14.4746),
         buildingsEnabled: true,
         compassEnabled: true,
         markers: Set<Marker>.of(markers.values),
-
-        // onLongPress: null, //implement the long press to add markers
-        // onTap: null, //implement the on tap to add markers
-        onTap: (LatLng tapPos) => {
-          setState(() {
-            _lastTap = tapPos;
-            _addMarker(tapPos);
-            print('Tapped: $_lastTap');
-          }),
-        },
-        onLongPress: (LatLng longPressPos) => {
-          setState(() {
-            _lastLongPress = longPressPos;
-            print('Long Pressed: $_lastLongPress');
-          }),
-        },
-        // onLongPress: ,
+        onTap: (LatLng tapPos) => _addMarker(tapPos),
         mapToolbarEnabled: true,
         zoomControlsEnabled: false,
         zoomGesturesEnabled: true,
@@ -83,7 +58,6 @@ class _MapPageState extends State<MapPage> {
         icon: const Icon(Icons.clear_rounded),
       ),
     );
-    // final Map<String, Marker> _markers = {};
   }
 
   Future<void> onMapCreated(GoogleMapController controller) async {
@@ -94,46 +68,117 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _onMarkerDrag(MarkerId markerId, LatLng newPosition) async {
     setState(() {
+      // if (markerId.value == "origin") {
+      //   originChosen = false;
+      // } else if (markerId.value == "destination") {
+      //   destinationChosen = false;
+      // }
       markerPosition = newPosition;
     });
+    // _updateMarkerInfo(markerId, newPosition);
+  }
+
+  Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
+    setState(() {
+      if (markerId.value == "origin") {
+        originChosen = false;
+      } else if (markerId.value == "destination") {
+        destinationChosen = false;
+      }
+      markerPosition = newPosition;
+    });
+    _updateMarkerInfo(markerId, newPosition);
   }
 
   void _addMarker(LatLng location) {
-    final int markerCount = markers.length;
-    final String markerIdVal = 'marker_id_$_markerIdCounter';
-    _markerIdCounter++;
-    final MarkerId markerId = MarkerId(markerIdVal);
+    String markerIdVal;
+    BitmapDescriptor markerIcon;
+    if (!originChosen) {
+      markerIdVal = 'origin';
+      markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
+      originChosen = true;
+    }else if(!destinationChosen){
+      markerIdVal = 'destination';
+      markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueRed);
+      destinationChosen = true;
+    }else{
+      return;
+    }
 
+    final MarkerId markerId = MarkerId(markerIdVal);
     final Marker marker = Marker(
       markerId: markerId,
       position: location,
       infoWindow: InfoWindow(
-        title: "Marker",
-        snippet: 'This is a marker',
+        title: markerIdVal,
+        snippet: 'Loading...',
         onTap: () =>_removeMarker(markerId),
       ),
+      icon: markerIcon,
       onDrag: (LatLng position) => _onMarkerDrag(markerId, position),
+      // onDragEnd: (LatLng newPosition) => _onMarkerDragEnd(markerId, newPosition),
       draggable: true,
     );
 
     setState(() {
       markers[markerId] = marker;
     });
+    _updateMarkerInfo(markerId, location);
   }
 
   void _removeMarker(MarkerId markerId) {
     setState(() {
-      if (markers.containsKey(markerId)) {
-        markers.remove(markerId);
+      if (markerId.value == "origin") {
+        originChosen = false;
+      } else if (markerId.value == "destination") {
+        destinationChosen = false;
       }
+      markers.remove(markerId);
     });
   }
 
   void resetCoordinates() {
     setState(() {
+      originChosen = false;
+      destinationChosen = false;
       markers.clear();
     });
   }
+
+  Future<void> _updateMarkerInfo(MarkerId markerId, LatLng position) async {
+    String place = await _getPlace(position);
+    setState(() {
+      final Marker marker = markers[markerId]!;
+      markers[markerId] = marker.copyWith(
+        infoWindowParam: marker.infoWindow.copyWith(
+          snippetParam: place,
+        ),
+      );
+    });
+  }
+
+  Future<String> _getPlace(LatLng position) async {
+  List<Placemark> newPlace = await placemarkFromCoordinates(position.latitude, position.longitude);
+  print("I am here");
+
+  print(newPlace);
+  // this is all you need
+  Placemark placeMark  = newPlace[0]; 
+  String? name = placeMark.name;
+  String? subLocality = placeMark.subLocality;
+  String? locality = placeMark.locality;
+  String? administrativeArea = placeMark.administrativeArea;
+  String? postalCode = placeMark.postalCode;
+  String? country = placeMark.country;
+  String? address = "$name, $subLocality, $locality, $administrativeArea $postalCode, $country";
+  
+  print(address);
+
+  // setState(() {
+  //   _address = address; // update _address
+  // });
+  return address;
+}
 
   @override
   void dispose() {
