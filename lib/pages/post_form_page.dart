@@ -3,6 +3,7 @@ import 'package:go_ride_sharing/models/post.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/map_window.dart';
+import 'package:go_ride_sharing/pages/map_page.dart';
 
 class PostFormPage extends StatefulWidget {
   final Post? post;
@@ -22,10 +23,10 @@ class _PostFormPageState extends State<PostFormPage> {
   final _seatsAvailableController = TextEditingController();
   final _departureDateController = TextEditingController();
   final _priceController = TextEditingController();
-  final _startLongitudeController = TextEditingController();
-  final _startLatitudeController = TextEditingController();
-  final _destinationLongitudeController = TextEditingController();
-  final _destinationLatitudeController = TextEditingController();
+  final _originLngController = TextEditingController();
+  final _originLatController = TextEditingController();
+  final _destinationLngController = TextEditingController();
+  final _destinationLatController = TextEditingController();
 
   @override
   void initState() {
@@ -38,12 +39,12 @@ class _PostFormPageState extends State<PostFormPage> {
       _departureDateController.text =
           widget.post!.departureDate.toLocal().toString().split(' ')[0];
       _priceController.text = widget.post!.price.toString();
-      _startLongitudeController.text = widget.post!.startLongitude.toString();
-      _startLatitudeController.text = widget.post!.startLatitude.toString();
-      _destinationLongitudeController.text =
-          widget.post!.destinationLongitude.toString();
-      _destinationLatitudeController.text =
-          widget.post!.destinationLatitude.toString();
+      _originLngController.text = widget.post!.originLng.toString();
+      _originLatController.text = widget.post!.originLat.toString();
+      _destinationLngController.text =
+          widget.post!.destinationLng.toString();
+      _destinationLatController.text =
+          widget.post!.destinationLat.toString();
     }
   }
 
@@ -55,10 +56,10 @@ class _PostFormPageState extends State<PostFormPage> {
     _seatsAvailableController.dispose();
     _departureDateController.dispose();
     _priceController.dispose();
-    _startLongitudeController.dispose();
-    _startLatitudeController.dispose();
-    _destinationLongitudeController.dispose();
-    _destinationLatitudeController.dispose();
+    _originLngController.dispose();
+    _originLatController.dispose();
+    _destinationLngController.dispose();
+    _destinationLatController.dispose();
     super.dispose();
   }
 
@@ -81,11 +82,11 @@ class _PostFormPageState extends State<PostFormPage> {
   Future<void> _submitPost() async {
     if (_formKey.currentState!.validate()) {
       final post = Post(
-        startLatitude: double.parse(_startLatitudeController.text),
-        startLongitude: double.parse(_startLongitudeController.text),
-        destinationLatitude: double.parse(_destinationLatitudeController.text),
-        destinationLongitude:
-            double.parse(_destinationLongitudeController.text),
+        originLat: double.parse(_originLatController.text),
+        originLng: double.parse(_originLngController.text),
+        destinationLat: double.parse(_destinationLatController.text),
+        destinationLng:
+            double.parse(_destinationLngController.text),
         description: _postDescriptionController.text,
         seatsAvailable: int.parse(_seatsAvailableController.text),
         postName: _postNameController.text,
@@ -190,7 +191,38 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              MapWindow(),
+              Stack(
+                alignment: Alignment.center,
+                children: [
+                  MapWindow(),  //TODO: param are the coordinates
+                  Positioned(
+                    top: 20,
+                    child: FilledButton.icon(
+                      style: FilledButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(horizontal: 15, vertical: 15),
+                        backgroundColor: notYellow,
+                        foregroundColor: notBlack,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shadowColor: notBlack,
+                        elevation:
+                            10, // Increase elevation for a more prominent shadow
+                      ),
+                      icon: const Icon(Icons.pin_drop),
+                      label: const Text("Choose Locations"),
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => MapPage(),
+                          ),
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
               const SizedBox(height: 20),
               ElevatedButton(
                 style: FilledButton.styleFrom(

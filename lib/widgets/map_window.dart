@@ -1,6 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_ride_sharing/pages/map_page.dart';
-import 'package:go_ride_sharing/theme.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 // should draw markers if they already exist, (so when the user comes back to this page from map page, the markers are present)
@@ -16,15 +14,23 @@ class MapWindow extends StatefulWidget {
   // given the latlongs, we eventually want to display the markers and route
   // this object should return the latlongs to the parent object via callback function
 
+
+  //TODO: param are the coordinates, if you dont get any coordinates, then you dont show the markers
+
   @override
   State<MapWindow> createState() => _MapWindowState();
 }
 
 class _MapWindowState extends State<MapWindow> {
-  CameraPosition _cameraPosition = CameraPosition(
-    target: LatLng(37.42796133580664, -122.085749655962),
-    zoom: 20.4746,
-  );
+
+  static const String ORIGIN = "Origin";
+  static const String DESTINATION = "Destination";
+  // GoogleMapController? mapController;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
+  static final Map<String, String> _addressData = {
+    ORIGIN: 'Loading...',
+    DESTINATION: 'Loading...',
+  };
 
   @override
   void initState() {
@@ -34,7 +40,6 @@ class _MapWindowState extends State<MapWindow> {
 
   void _zoomToFitMarkers() async {
     GoogleMapController controller = await _controller.future;
-    print(await controller.getLatLng(ScreenCoordinate(x: 0, y: 0)));
     LatLngBounds bounds = LatLngBounds(
       southwest: LatLng(37.42796133580664, -122.085749655962),
       northeast: LatLng(37.43296265331129, -122.08832357078792),
@@ -55,63 +60,23 @@ class _MapWindowState extends State<MapWindow> {
 
   @override
   Widget build(BuildContext context) {
-    return Stack(
-      alignment: Alignment.center,
-      children: <Widget>[
-        Card(
+    return Card(
             clipBehavior: Clip.hardEdge,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 2,
               child: GoogleMap(
-                initialCameraPosition: _cameraPosition,
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(49.8951, -97.1384), // Winnipeg coordinates
+                  zoom: 12,
+                ),
                 buildingsEnabled: true,
                 zoomGesturesEnabled: true,
-                markers: {
-                  Marker(
-                    icon: BitmapDescriptor.defaultMarkerWithHue(
-                        BitmapDescriptor.hueGreen),
-                    infoWindow: InfoWindow(title: 'Origin'),
-                    markerId: MarkerId('1'),
-                    position: LatLng(37.42796133580664, -122.085749655962),
-                  ),
-                  Marker(
-                    markerId: MarkerId('2'),
-                    infoWindow: InfoWindow(title: 'Destination'),
-                    position: LatLng(37.43296265331129, -122.08832357078792),
-                  ),
-                },
+                markers: Set<Marker>.of(markers.values),
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },
               ),
-            )),
-        Positioned(
-          top: 20,
-          child: FilledButton.icon(
-            style: FilledButton.styleFrom(
-              padding: EdgeInsets.symmetric(horizontal: 15, vertical: 15),
-              backgroundColor: notYellow,
-              foregroundColor: notBlack,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-              shadowColor: notBlack,
-              elevation: 10, // Increase elevation for a more prominent shadow
-            ),
-            icon: Icon(Icons.pin_drop),
-            label: Text("Choose Locations"),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => MapPage(),
-                ),
-              );
-            },
-          ),
-        ),
-      ],
-    );
+            ));
   }
 }
