@@ -24,7 +24,7 @@ class SplashScreenState extends State<SplashScreen> {
       if (hasToken) {
         Navigator.of(context).pushReplacementNamed('/home');
       } else {
-        Navigator.of(context).pushReplacementNamed('/home');
+        Navigator.of(context).pushReplacementNamed('/sign_in_page');
       }
     });
   }

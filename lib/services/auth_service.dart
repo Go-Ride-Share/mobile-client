@@ -32,9 +32,8 @@ static final Map<String, String> RESPONSE_MSG = {
       var hashedPassword = sha256.convert(bytes).toString();
 
       // Send the email and hashed password to the account manager URL
-      var url = Uri.parse('${ENV.API_AUTH_URL}/api/VerifyLoginCredentials');
+      var url = Uri.parse('${ENV.API_AUTH_URL}/api/User/PasswordLogin');
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
-      var userDetails = await _get(Uri.parse('${ENV.API_BASE_URL}/api/GetUserDetails'), _defaultHeaders, {'email': email});
 
       // Handle the response
       if (response.statusCode == 200) {
@@ -76,7 +75,7 @@ static final Map<String, String> RESPONSE_MSG = {
       var bytes = utf8.encode(password);
       formData['password'] = sha256.convert(bytes).toString();;
       // Send the email and hashed password to the account manager URL
-      var url = Uri.parse('${ENV.API_AUTH_URL}/api/CreateUser');
+      var url = Uri.parse('${ENV.API_AUTH_URL}/api/Users');
       var response = await _post(url, _defaultHeaders, formData);
 
       // Handle the response
