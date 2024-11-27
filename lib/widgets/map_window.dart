@@ -66,10 +66,7 @@ class _MapWindowState extends State<MapWindow> {
               child: GoogleMap(
                 initialCameraPosition: _cameraPosition,
                 buildingsEnabled: true,
-                compassEnabled: true,
-                myLocationEnabled: true,
-                myLocationButtonEnabled: true,
-                fortyFiveDegreeImageryEnabled: true,
+                zoomGesturesEnabled: true,
                 markers: {
                   Marker(
                     icon: BitmapDescriptor.defaultMarkerWithHue(
