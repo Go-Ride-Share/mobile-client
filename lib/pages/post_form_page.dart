@@ -29,6 +29,7 @@ class _PostFormPageState extends State<PostFormPage> {
   LatLng? destination;
   String? originName;
   String? destinationName;
+  Map<MarkerId, Marker> markers = {};
 
   @override
   void initState() {
@@ -74,7 +75,7 @@ class _PostFormPageState extends State<PostFormPage> {
 
   // Function to submit the post form
   Future<void> _submitPost() async {
-    if (_formKey.currentState!.validate()) {
+    if (_formKey.currentState!.validate() && validateMarkers(markers)) {
       final post = Post(
         originLat: origin!.latitude,
         originLng: origin!.longitude,
@@ -91,13 +92,27 @@ class _PostFormPageState extends State<PostFormPage> {
 
       // TODO: POTENTIALLY USELESS CODE, might need to rethink how Post Update works
       // Create or update the post based on whether a post was passed
-      if (widget.post == null) {
-        await PostService().createPost(post);
-      } else {
-        await PostService().updatePost(post);
-      }
-      Navigator.pop(context);
+      // if (widget.post == null) {
+      //   await PostService().createPost(post);
+      // } else {
+      //   await PostService().updatePost(post);
+      // }
+      await PostService().createPost(post);
+      // Navigator.pop(context);
     }
+  }
+
+  // Function to validate the markers
+  bool validateMarkers(Map<MarkerId, Marker> markers) {
+    if (markers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please select origin and destination locations'),
+        ),
+      );
+      return false;
+    }
+    return true;
   }
 
   Future<void> _navigateAndDisplayMap(BuildContext context) async {
@@ -113,6 +128,7 @@ class _PostFormPageState extends State<PostFormPage> {
     if (!context.mounted) return;
 
     setState(() {
+      markers = result;
       origin = result.values.first.position;
       destination = result.values.last.position;
       originName = result.values.first.infoWindow.snippet;
@@ -209,7 +225,7 @@ class _PostFormPageState extends State<PostFormPage> {
               Stack(
                 alignment: Alignment.center,
                 children: [
-                  MapWindow(), //TODO: param are the coordinates
+                    MapWindow(markers: markers),
                   Positioned(
                     top: 20,
                     child: FilledButton.icon(

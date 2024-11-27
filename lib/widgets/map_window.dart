@@ -16,44 +16,37 @@ class MapWindow extends StatefulWidget {
 
 
   //TODO: param are the coordinates, if you dont get any coordinates, then you dont show the markers
+  MapWindow({Key? key, required this.markers}) : super(key: key);
+
+  final Map<MarkerId, Marker> markers;
 
   @override
   State<MapWindow> createState() => _MapWindowState();
 }
 
 class _MapWindowState extends State<MapWindow> {
-
-  static const String ORIGIN = "Origin";
-  static const String DESTINATION = "Destination";
-  // GoogleMapController? mapController;
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  static final Map<String, String> _addressData = {
-    ORIGIN: 'Loading...',
-    DESTINATION: 'Loading...',
-  };
-
   @override
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) => _zoomToFitMarkers());
   }
 
-  void _zoomToFitMarkers() async {
-    GoogleMapController controller = await _controller.future;
+  void _zoomToFitMarkers() {
     LatLngBounds bounds = LatLngBounds(
-      southwest: LatLng(37.42796133580664, -122.085749655962),
-      northeast: LatLng(37.43296265331129, -122.08832357078792),
+      southwest: widget.markers.values.first.position,
+      northeast: widget.markers.values.last.position,
     );
+    print("Bounds: $bounds");
     CameraUpdate cameraUpdate = CameraUpdate.newCameraPosition(
       CameraPosition(
         target: LatLng(
           (bounds.northeast.latitude + bounds.southwest.latitude) / 2,
           (bounds.northeast.longitude + bounds.southwest.longitude) / 2,
         ),
-        zoom: 14,
+        zoom: 10,
       ),
     );
-    controller.animateCamera(cameraUpdate);
+    _controller.future.then((controller) => controller.animateCamera(cameraUpdate));
   }
 
   final Completer<GoogleMapController> _controller = Completer();
@@ -68,11 +61,12 @@ class _MapWindowState extends State<MapWindow> {
               child: GoogleMap(
                 initialCameraPosition: CameraPosition(
                   target: LatLng(49.8951, -97.1384), // Winnipeg coordinates
-                  zoom: 12,
+                  zoom: 10,
                 ),
                 buildingsEnabled: true,
                 zoomGesturesEnabled: true,
-                markers: Set<Marker>.of(markers.values),
+                onTap: (LatLng position) => _zoomToFitMarkers(),
+                markers: Set<Marker>.of(widget.markers.values),
                 onMapCreated: (GoogleMapController controller) {
                   _controller.complete(controller);
                 },

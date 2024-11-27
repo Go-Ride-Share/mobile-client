@@ -32,7 +32,7 @@ static final Map<String, String> RESPONSE_MSG = {
       var hashedPassword = sha256.convert(bytes).toString();
 
       // Send the email and hashed password to the account manager URL
-      var url = Uri.parse('${ENV.API_AUTH_URL}/api/User/PasswordLogin');
+      var url = Uri.parse('${ENV.API_AUTH_URL}/api/Users/PasswordLogin');
       var response = await _post(url, _defaultHeaders, {'email': email, 'password': hashedPassword});
 
       // Handle the response

@@ -34,7 +34,10 @@ class PostService {
   }
 
   Future<void> createPost(Post post) async {
+    String? userID = await this.userID;
+    
     final postData = jsonEncode({
+      'posterId': userID,
       'name': post.postName,
       'originLat': post.originLat,
       'originLng': post.originLng,
@@ -48,11 +51,13 @@ class PostService {
       'price': post.price,
     });
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/Posts/');
+    final url = Uri.parse('${ENV.API_BASE_URL}/api/posts');
 
-    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
  
     print('Asits Post Data: $postData');
+    print('Asits Headers: $headers');
+    print('Asits URL: $url');
 
     try {
       final response = await http.post(url, headers: headers, body: postData);
