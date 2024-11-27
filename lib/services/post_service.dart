@@ -21,7 +21,7 @@ class PostService {
   Future<List<Post>> fetchProfilePosts() async {
     final userId = await userID;
 
-    final url = '${ENV.API_BASE_URL}/api/GetPosts?userId=$userId';
+    final url = '${ENV.API_BASE_URL}/api/Posts/$userId';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
@@ -47,7 +47,7 @@ class PostService {
       'price': post.price,
     });
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
+    final url = Uri.parse('${ENV.API_BASE_URL}/api/Posts/${await userID}');
 
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
  
@@ -81,7 +81,7 @@ class PostService {
       'price': post.price,
     });
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
+    final url = Uri.parse('${ENV.API_BASE_URL}/api/Posts/${await userID}');
 
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
@@ -101,7 +101,7 @@ class PostService {
   }
 
   Future<List<Post>> fetchAllPosts() async {
-    const url = '${ENV.API_AUTH_URL}/api/getAllPosts';
+    const url = '${ENV.API_AUTH_URL}/api/Posts';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
