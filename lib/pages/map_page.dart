@@ -19,10 +19,10 @@ class _MapPageState extends State<MapPage> {
   GoogleMapController? mapController;
   Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
-  static const String ORIGIN = "Origin";
-  static const String DESTINATION = "Destination";
   bool originChosen = false;
   bool destinationChosen = false;
+  static const String ORIGIN = "Origin";
+  static const String DESTINATION = "Destination";
   static final Map<String, String> _addressData = {
     ORIGIN: 'Loading...',
     DESTINATION: 'Loading...',
