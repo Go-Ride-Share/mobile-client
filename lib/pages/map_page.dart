@@ -5,8 +5,6 @@ import 'dart:async';
 
 class MapPage extends StatefulWidget {
   MapPage({super.key});
-  bool showBanner = false;
-  // include constructor strings for the data like pick points etc.
   // maybe even include boolean where this is readonly page or editable page
   // if its read only page then we dont show another bar underneath showing date and time.
   // if its editable page then we show the bar underneath showing date and time.
@@ -17,7 +15,9 @@ class MapPage extends StatefulWidget {
 
 class _MapPageState extends State<MapPage> {
   _MapPageState();
+
   GoogleMapController? mapController;
+  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
 
   static const String ORIGIN = "Origin";
   static const String DESTINATION = "Destination";
@@ -30,10 +30,6 @@ class _MapPageState extends State<MapPage> {
 
   //TODO: make this into a function that takes lat longs existing and returns center, otherwise returns winnipeg default.
   static const LatLng center = LatLng(49.8951, -97.1384);
-
-  Map<MarkerId, Marker> markers = <MarkerId, Marker>{};
-  MarkerId? selectedMarker;
-  LatLng? markerPosition;
 
   @override
   Widget build(BuildContext context) {
@@ -54,22 +50,18 @@ class _MapPageState extends State<MapPage> {
       ),
       body: GoogleMap(
         onMapCreated: onMapCreated,
+        markers: Set<Marker>.of(markers.values),
+        onTap: (LatLng tapPos) => _addMarker(tapPos),
         initialCameraPosition: const CameraPosition(target: center, zoom: 10.4746),
         buildingsEnabled: true,
         compassEnabled: true,
-        markers: Set<Marker>.of(markers.values),
-        onTap: (LatLng tapPos) => _addMarker(tapPos),
+        myLocationButtonEnabled: false,
         mapToolbarEnabled: true,
         zoomControlsEnabled: false,
         zoomGesturesEnabled: true,
       ),
       floatingActionButton: FloatingActionButton.extended(
-        onPressed: () {
-          setState(() {
-            widget.showBanner = !widget.showBanner;
-            resetCoordinates();
-          });
-        },
+        onPressed: _resetCoordinates,
         label: const Text('Reset Coordinates'),
         icon: const Icon(Icons.clear_rounded),
       ),
@@ -82,22 +74,10 @@ class _MapPageState extends State<MapPage> {
     });
   }
 
-  Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
-    setState(() {
-      //reset the origin and destination flags if the marker is dragged, so it can be drawn again
-      if (markerId.value == ORIGIN) {
-        originChosen = false;
-      } else if (markerId.value == DESTINATION) {
-        destinationChosen = false;
-      }
-    });
-    _addMarker(newPosition);
-    _updateMarkerInfo(markerId, newPosition);
-  }
-
   void _addMarker(LatLng location) {
     String markerIdVal;
     BitmapDescriptor markerIcon;
+
     if (!originChosen) {
       markerIdVal = ORIGIN;
       markerIcon = BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen);
@@ -124,24 +104,38 @@ class _MapPageState extends State<MapPage> {
       draggable: true,
     );
 
+    //set state first because we want the marker to display without lags.
+    //updating marker info is async and will take time. So that updates later.
     setState(() {
       markers[markerId] = marker;
     });
-    _updateMarkerInfo(markerId, location);
+    _updateMarkerInfo(markerId, location);  
   }
 
   void _removeMarker(MarkerId markerId) {
+    setState(() {
+      _resetFlags(markerId);
+      markers.remove(markerId);
+    });
+  }
+
+  Future<void> _onMarkerDragEnd(MarkerId markerId, LatLng newPosition) async {
+    _resetFlags(markerId);
+    _addMarker(newPosition);
+    _updateMarkerInfo(markerId, newPosition);
+  }
+
+  void _resetFlags(MarkerId markerId) {
     setState(() {
       if (markerId.value == ORIGIN) {
         originChosen = false;
       } else if (markerId.value == DESTINATION) {
         destinationChosen = false;
       }
-      markers.remove(markerId);
     });
   }
 
-  void resetCoordinates() {
+  void _resetCoordinates() {
     setState(() {
       originChosen = false;
       destinationChosen = false;
@@ -163,17 +157,17 @@ class _MapPageState extends State<MapPage> {
 
   Future<void> _findPlaceName(MarkerId markerId, LatLng position) async {
     List<Placemark> newPlace = await placemarkFromCoordinates(position.latitude, position.longitude);
-    print(newPlace);
-    // this is all you need
-    Placemark placeMark  = newPlace[0]; 
+    Placemark placeMark  = newPlace.first; 
+
     String? streetName = placeMark.street;
     String? locality = placeMark.locality;
     String? administrativeArea = placeMark.administrativeArea;
 
+    // for remote locations, API gives the same street and locality names. `placemark.name` is supposedly "the most appropriate name" for remote locations.
     if (streetName == locality) {
-      streetName = placeMark.name;    // for remote locations, google gives same street and locality names. So we read more generic name for uniqueness.
+      streetName = placeMark.name;
     }
-    // print("ToString: " + newPlace[0].toString());
+
     setState(() {
       _addressData[markerId.value] = "$streetName, $locality, $administrativeArea"; // update _address
     });
