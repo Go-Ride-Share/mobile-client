@@ -62,7 +62,7 @@ class PostService {
     try {
       final response = await http.post(url, headers: headers, body: postData);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Post created successfully');
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
@@ -98,7 +98,7 @@ class PostService {
     try {
       final response = await http.post(url, headers: headers, body: postData);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Post created successfully');
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
