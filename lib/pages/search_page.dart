@@ -88,7 +88,7 @@ class SearchPageState extends State<SearchPage> {
   //   });
   // }
 
-  void _openSearchModal() {
+void _openSearchModal() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Makes the modal expandable to full height.
@@ -114,17 +114,12 @@ class SearchPageState extends State<SearchPage> {
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      Expanded(
+                      const Expanded(
                         child: TextField(
                           keyboardType: TextInputType.number,
-                          controller: _priceController,
                           decoration: const InputDecoration(
                             labelText: 'Price',
                             border: OutlineInputBorder(),
-                            focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: notYellow, width: 3.0),
-                            ),
                           ),
                         ),
                       ),
@@ -137,8 +132,7 @@ class SearchPageState extends State<SearchPage> {
                             labelText: 'Number of Seats',
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
-                              borderSide:
-                                  BorderSide(color: notYellow, width: 3.0),
+                              borderSide: BorderSide(color: notYellow, width: 3.0),
                             ),
                           ),
                         ),
@@ -146,27 +140,8 @@ class SearchPageState extends State<SearchPage> {
                     ],
                   ),
                   const SizedBox(height: 16),
-                  Expanded(
-                    child: TextFormField(
-                      controller: _departureDateController,
-                      readOnly: true,
-                      decoration: InputDecoration(
-                        suffixIcon: IconButton(
-                          icon: const Icon(Icons.calendar_today),
-                          onPressed: () => _selectDate(context),
-                        ),
-                        labelText: 'Departure Date',
-                        border: OutlineInputBorder(),
-                        focusedBorder: OutlineInputBorder(
-                          borderSide: BorderSide(color: notYellow, width: 3.0),
-                        ),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
                   ElevatedButton(
                     onPressed: () {
-                      // _applyFilters();
                       Navigator.pop(context); // Close the modal
                     },
                     child: const Text('Search'),
