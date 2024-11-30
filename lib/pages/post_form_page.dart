@@ -86,7 +86,7 @@ class _PostFormPageState extends State<PostFormPage> {
         description: _postDescriptionController.text,
         seatsAvailable: int.parse(_seatsAvailableController.text),
         postName: _postNameController.text,
-        departureDate: DateTime.parse(_departureDateController.text),
+        departureDate: DateTime.parse(_departureDateController.text).toUtc(),
         price: double.parse(_priceController.text),
       );
 
