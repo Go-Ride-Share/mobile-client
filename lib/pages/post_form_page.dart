@@ -98,7 +98,7 @@ class _PostFormPageState extends State<PostFormPage> {
       //   await PostService().updatePost(post);
       // }
       await PostService().createPost(post);
-      // Navigator.pop(context);
+      Navigator.pushNamed(context, '/profile');
     }
   }
 
@@ -107,6 +107,7 @@ class _PostFormPageState extends State<PostFormPage> {
     if (markers.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
+          behavior: SnackBarBehavior.floating,
           content: Text('Please select origin and destination locations'),
         ),
       );
@@ -168,6 +169,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               CustomTextFormField(
                 controller: _postDescriptionController,
                 labelText: 'Post Description',
@@ -178,6 +180,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               CustomTextFormField(
                 controller: _seatsAvailableController,
                 labelText: 'Seats Available',
@@ -192,6 +195,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              SizedBox(height: 16),
               CustomTextFormField(
                 controller: _departureDateController,
                 labelText: 'Departure Date',
@@ -207,6 +211,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               CustomTextFormField(
                 controller: _priceController,
                 labelText: 'Price',
@@ -222,10 +227,11 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
+              const SizedBox(height: 16),
               Stack(
                 alignment: Alignment.center,
                 children: [
-                    MapWindow(markers: markers),
+                  MapWindow(markers: markers),
                   Positioned(
                     top: 20,
                     child: FilledButton.icon(
@@ -294,7 +300,12 @@ class CustomTextFormField extends StatelessWidget {
       controller: controller,
       decoration: InputDecoration(
         labelText: labelText,
+        suffixIconColor: notBlack,
         suffixIcon: suffixIcon,
+        border: const OutlineInputBorder(),
+        focusedBorder: const OutlineInputBorder(
+          borderSide: BorderSide(color: notYellow, width: 3.0),
+        ),
       ),
       keyboardType: keyboardType,
       readOnly: readOnly,

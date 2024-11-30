@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/pages/map_page.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/theme.dart';
+import 'package:go_ride_sharing/widgets/map_window.dart';
 import 'package:go_ride_sharing/widgets/post_card.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-
+import 'package:go_ride_sharing/models/search_filter.dart';
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -50,6 +51,7 @@ class SearchPageState extends State<SearchPage> {
       setState(() {
         _departureDateController.text = "${picked.toLocal()}".split(' ')[0];
       });
+      print("Date selected: ${_departureDateController.text}");
     }
   }
 
@@ -88,7 +90,37 @@ class SearchPageState extends State<SearchPage> {
   //   });
   // }
 
-void _openSearchModal() {
+  void _searchWithFilters() {
+    // Get the values from the controllers
+    final departureDate = _departureDateController.text;
+    final price = double.tryParse(_priceController.text) ?? 0.0;
+    final seatsAvailable = int.tryParse(_seatsAvailableController.text) ?? 0;
+
+    // Call the service to fetch posts with filters
+    Future<List<Post>> filteredPostsFuture = PostService().fetchPostsByFilters(
+      new Searchfilter(
+        originLat: origin!.latitude,
+        originLng: origin!.longitude,
+        destinationLat: destination!.latitude,
+        destinationLng: destination!.longitude,
+        seatsAvailable: seatsAvailable,
+        departureDate: DateTime.parse(departureDate).toUtc(),
+        price: price,
+      )
+    );
+
+    // print('Searching with filters...');
+    // _postsFuture?.then((posts) {
+    //   for (var post in posts) {
+    //   print('Post: $post');
+    //   }
+    // });
+    setState(() {
+      _postsFuture = filteredPostsFuture;
+    });
+  }
+
+  void _openSearchModal() {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true, // Makes the modal expandable to full height.
@@ -108,18 +140,45 @@ void _openSearchModal() {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   const Text(
-                    'Search Filters',
+                    'Filter Posts',
                     style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _departureDateController,
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Departure Date',
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.calendar_today),
+                        onPressed: () => _selectDate(context),
+                      ),
+                      border: const OutlineInputBorder(),
+                      focusedBorder: OutlineInputBorder(
+                        borderSide: BorderSide(color: notYellow, width: 3.0),
+                      ),
+                    ),
+                    validator: (value) {
+                      if (value == null || value.isEmpty) {
+                        return 'Please enter a departure date';
+                      }
+                      return null;
+                    },
                   ),
                   const SizedBox(height: 16),
                   Row(
                     children: [
-                      const Expanded(
+                      Expanded(
                         child: TextField(
                           keyboardType: TextInputType.number,
+                          controller: _priceController,
                           decoration: const InputDecoration(
                             labelText: 'Price',
                             border: OutlineInputBorder(),
+                            focusedBorder: OutlineInputBorder(
+                              borderSide:
+                                  BorderSide(color: notYellow, width: 3.0),
+                            ),
                           ),
                         ),
                       ),
@@ -132,7 +191,8 @@ void _openSearchModal() {
                             labelText: 'Number of Seats',
                             border: OutlineInputBorder(),
                             focusedBorder: OutlineInputBorder(
-                              borderSide: BorderSide(color: notYellow, width: 3.0),
+                              borderSide:
+                                  BorderSide(color: notYellow, width: 3.0),
                             ),
                           ),
                         ),
@@ -140,9 +200,52 @@ void _openSearchModal() {
                     ],
                   ),
                   const SizedBox(height: 16),
+                  Stack(
+                    alignment: Alignment.center,
+                    children: [
+                      MapWindow(markers: markers),
+                      Positioned(
+                        top: 20,
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal: 15, vertical: 15),
+                            backgroundColor: notYellow,
+                            foregroundColor: notBlack,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                            shadowColor: notBlack,
+                            elevation:
+                                10, // Increase elevation for a more prominent shadow
+                          ),
+                          icon: const Icon(Icons.pin_drop),
+                          label: const Text("Choose Locations"),
+                          onPressed: () {
+                            _navigateAndDisplayMap(context);
+                          },
+                        ),
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
                   ElevatedButton(
+                    style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
                     onPressed: () {
                       Navigator.pop(context); // Close the modal
+                      // print out all the values
+                      print('Departure Date: ${_departureDateController.text}');
+                      print('Price: ${_priceController.text}');
+                      print('Seats Available: ${_seatsAvailableController.text}');
+                      print('Origin: $origin');
+                      print('Destination: $destination');
+                      _searchWithFilters();
                     },
                     child: const Text('Search'),
                   ),

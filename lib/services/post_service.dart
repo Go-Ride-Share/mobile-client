@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'caching_service.dart';
 import '../constants.dart';
 import 'package:go_ride_sharing/utils.dart';
-
+import '../models/search_filter.dart';
 class PostService {
   CachingService cache = CachingService();
 
@@ -16,6 +16,22 @@ class PostService {
     baseAccessToken = cache.getData(ENV.CACHE_BEARER_TOKEN_KEY);
     dbAccessToken = cache.getData(ENV.CACHE_DB_TOKEN_KEY);
     userID = cache.getData(ENV.CACHE_USER_ID_KEY);
+  }
+
+  Future<List<Post>> fetchPostsByFilters(Searchfilter filters) async {
+    String? userID = await this.userID;
+
+    const url = '${ENV.API_AUTH_URL}/api/posts/search';
+    // logic token and db token can be null values if they are expired.
+    // We are ignoring the case of having to sign in again.
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    print('Searching with filters...');
+
+    List<Post> posts = (
+      await sendPostRequestAndGetAsObject(convertJsonToPostList, url, headers, jsonEncode(filters.toJson()))
+    ).cast<Post>();
+
+    return posts;
   }
 
   Future<List<Post>> fetchProfilePosts() async {

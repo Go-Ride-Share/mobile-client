@@ -57,7 +57,7 @@ class _MapWindowState extends State<MapWindow> {
             clipBehavior: Clip.hardEdge,
             child: SizedBox(
               width: MediaQuery.of(context).size.width,
-              height: MediaQuery.of(context).size.height / 2,
+              height: MediaQuery.of(context).size.height / 3,
               child: GoogleMap(
                 initialCameraPosition: CameraPosition(
                   target: LatLng(49.8951, -97.1384), // Winnipeg coordinates

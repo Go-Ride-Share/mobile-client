@@ -90,7 +90,10 @@ class PostList extends StatelessWidget {
           return ListView.builder(
             itemCount: filteredPosts.length,
             itemBuilder: (context, index) {
-              return PostCard(post: filteredPosts[index]);
+              return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: PostCard(post: filteredPosts[index]),
+              );
             },
           );
         }
