@@ -5,6 +5,7 @@ import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/map_window.dart';
 import 'package:go_ride_sharing/pages/map_page.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:go_ride_sharing/pages/profile_page.dart';
 
 class PostFormPage extends StatefulWidget {
   final Post? post;
@@ -34,17 +35,15 @@ class _PostFormPageState extends State<PostFormPage> {
   @override
   void initState() {
     super.initState();
-    // If a post is passed, populate the form fields with its data
-    if (widget.post != null) {
-      _postNameController.text = widget.post!.postName;
-      _postDescriptionController.text = widget.post!.description;
-      _seatsAvailableController.text = widget.post!.seatsAvailable.toString();
-      _departureDateController.text =
-          widget.post!.departureDate.toLocal().toString().split(' ')[0];
-      _priceController.text = widget.post!.price.toString();
-
-      //TODO: POPULATE THE MARKERS SOMEHOW HERE
-    }
+    // If a post is passed, populate the form fields with its data << WHICH WILL NOT HAPPEN
+    // if (widget.post != null) {
+    //   _postNameController.text = widget.post!.postName;
+    //   _postDescriptionController.text = widget.post!.description;
+    //   _seatsAvailableController.text = widget.post!.seatsAvailable.toString();
+    //   _departureDateController.text =
+    //       widget.post!.departureDate.toLocal().toString().split(' ')[0];
+    //   _priceController.text = widget.post!.price.toString();
+    // }
   }
 
   @override
@@ -98,7 +97,11 @@ class _PostFormPageState extends State<PostFormPage> {
       //   await PostService().updatePost(post);
       // }
       await PostService().createPost(post);
-      Navigator.pushNamed(context, '/profile');
+      // Navigator.pushNamed(context, '/profile');
+      Navigator.push(
+        context,
+        MaterialPageRoute(builder: (context) => ProfilePage()),
+      );
     }
   }
 
@@ -117,8 +120,6 @@ class _PostFormPageState extends State<PostFormPage> {
   }
 
   Future<void> _navigateAndDisplayMap(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
     Map<MarkerId, Marker> result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MapPage()),
@@ -245,7 +246,7 @@ class _PostFormPageState extends State<PostFormPage> {
                         ),
                         shadowColor: notBlack,
                         elevation:
-                            10, // Increase elevation for a more prominent shadow
+                            10, // Increased elevation for a more prominent shadow
                       ),
                       icon: const Icon(Icons.pin_drop),
                       label: const Text("Choose Locations"),
