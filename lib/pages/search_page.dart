@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_ride_sharing/pages/map_page.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/theme.dart';
@@ -7,6 +8,7 @@ import 'package:go_ride_sharing/widgets/post_card.dart';
 import 'package:go_ride_sharing/models/post.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:go_ride_sharing/models/search_filter.dart';
+
 class SearchPage extends StatefulWidget {
   const SearchPage({super.key});
 
@@ -56,8 +58,6 @@ class SearchPageState extends State<SearchPage> {
   }
 
   Future<void> _navigateAndDisplayMap(BuildContext context) async {
-    // Navigator.push returns a Future that completes after calling
-    // Navigator.pop on the Selection Screen.
     Map<MarkerId, Marker> result = await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => MapPage()),
@@ -73,32 +73,31 @@ class SearchPageState extends State<SearchPage> {
       destination = result.values.last.position;
     });
   }
-  // void _applyFilters() {
-  //   setState(() {
-  //     _filteredItems = _items.where((item) {
-  //       final matchesName = item['name']
-  //           .toString()
-  //           .toLowerCase()
-  //           .contains(_nameController.text.toLowerCase());
-  //       final matchesCategory = _selectedCategory == 'All' ||
-  //           item['category'] == _selectedCategory;
-  //       final matchesPrice =
-  //           item['price'] >= _minPrice && item['price'] <= _maxPrice;
 
-  //       return matchesName && matchesCategory && matchesPrice;
-  //     }).toList();
-  //   });
-  // }
+  bool validateMarkers(Map<MarkerId, Marker> markers) {
+    if (markers.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text('Please select origin and destination in Filters',
+              style: TextStyle(color: notBlack)),
+          behavior: SnackBarBehavior.floating,
+        ),
+      );
+      return false;
+    }
+    return true;
+  }
 
   void _searchWithFilters() {
-    // Get the values from the controllers
-    final departureDate = _departureDateController.text;
-    final price = double.tryParse(_priceController.text) ?? 0.0;
-    final seatsAvailable = int.tryParse(_seatsAvailableController.text) ?? 0;
+    if (validateMarkers(markers)) {
+      final departureDate = _departureDateController.text;
+      final price = double.tryParse(_priceController.text) ?? 0.0;
+      final seatsAvailable = int.tryParse(_seatsAvailableController.text) ?? 0;
 
-    // Call the service to fetch posts with filters
-    Future<List<Post>> filteredPostsFuture = PostService().fetchPostsByFilters(
-      Searchfilter(
+      // Call the service to fetch posts with filters
+      Future<List<Post>> filteredPostsFuture =
+          PostService().fetchPostsByFilters(Searchfilter(
         originLat: origin!.latitude,
         originLng: origin!.longitude,
         destinationLat: destination!.latitude,
@@ -106,18 +105,18 @@ class SearchPageState extends State<SearchPage> {
         seatsAvailable: seatsAvailable,
         departureDate: DateTime.parse(departureDate).toUtc(),
         price: price,
-      )
-    );
+      ));
 
-    // print('Searching with filters...');
-    // _postsFuture?.then((posts) {
-    //   for (var post in posts) {
-    //   print('Post: $post');
-    //   }
-    // });
-    setState(() {
-      _postsFuture = filteredPostsFuture;
-    });
+      // print('Searching with filters...');
+      // _postsFuture?.then((posts) {
+      //   for (var post in posts) {
+      //   print('Post: $post');
+      //   }
+      // });
+      setState(() {
+        _postsFuture = filteredPostsFuture;
+      });
+    }
   }
 
   void _openSearchModal() {
@@ -180,6 +179,9 @@ class SearchPageState extends State<SearchPage> {
                                   BorderSide(color: notYellow, width: 3.0),
                             ),
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                         ),
                       ),
                       const SizedBox(width: 16),
@@ -195,6 +197,9 @@ class SearchPageState extends State<SearchPage> {
                                   BorderSide(color: notYellow, width: 3.0),
                             ),
                           ),
+                          inputFormatters: [
+                            FilteringTextInputFormatter.digitsOnly,
+                          ],
                         ),
                       ),
                     ],
@@ -231,15 +236,15 @@ class SearchPageState extends State<SearchPage> {
                   const SizedBox(height: 16),
                   ElevatedButton(
                     style: FilledButton.styleFrom(
-                    backgroundColor: notYellow,
-                    foregroundColor: notBlack,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    shadowColor: notBlack),
+                        backgroundColor: notYellow,
+                        foregroundColor: notBlack,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        shadowColor: notBlack),
                     onPressed: () {
-                      Navigator.pop(context); // Close the modal
                       _searchWithFilters();
+                      Navigator.pop(context); // Close the modal
                     },
                     child: const Text('Search'),
                   ),
