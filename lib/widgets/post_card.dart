@@ -12,7 +12,7 @@ import 'package:go_ride_sharing/theme.dart';
 class PostCard extends StatelessWidget {
   final Post post;
 
-  const PostCard({Key? key, required this.post}) : super(key: key);
+  const PostCard({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +48,7 @@ class PostCard extends StatelessWidget {
 class PostInformation extends StatelessWidget {
   final Post post;
 
-  PostInformation({Key? key, required this.post}) : super(key: key);
+  PostInformation({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -90,7 +90,7 @@ class PostInformation extends StatelessWidget {
 class TripDetails extends StatelessWidget {
   final Post post;
 
-  const TripDetails({Key? key, required this.post}) : super(key: key);
+  const TripDetails({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {

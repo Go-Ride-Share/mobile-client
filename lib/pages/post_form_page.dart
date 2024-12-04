@@ -146,7 +146,7 @@ class _PostFormPageState extends State<PostFormPage> {
         title: Text(title),
         actions: [
           IconButton(
-            icon: Icon(Icons.close),
+            icon: const Icon(Icons.close),
             onPressed: () {
               Navigator.pop(context);
             },
@@ -195,7 +195,7 @@ class _PostFormPageState extends State<PostFormPage> {
                   return null;
                 },
               ),
-              SizedBox(height: 16),
+              const SizedBox(height: 16),
               CustomTextFormField(
                 controller: _departureDateController,
                 labelText: 'Departure Date',

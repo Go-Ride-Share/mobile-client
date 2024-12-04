@@ -4,7 +4,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:async';
 
 class MapPage extends StatefulWidget {
-  MapPage({super.key});
+  const MapPage({super.key});
   // maybe even include boolean where this is readonly page or editable page
   // if its read only page then we dont show another bar underneath showing date and time.
   // if its editable page then we show the bar underneath showing date and time.
@@ -29,6 +29,7 @@ class _MapPageState extends State<MapPage> {
   };
 
   //TODO: make this into a function that takes lat longs existing and returns center, otherwise returns winnipeg default.
+  // useful for readonly mode
   static const LatLng center = LatLng(49.8951, -97.1384);
 
   @override

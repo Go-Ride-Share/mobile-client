@@ -16,7 +16,7 @@ class MapWindow extends StatefulWidget {
 
 
   //TODO: param are the coordinates, if you dont get any coordinates, then you dont show the markers
-  MapWindow({Key? key, required this.markers}) : super(key: key);
+  const MapWindow({super.key, required this.markers});
 
   final Map<MarkerId, Marker> markers;
 
@@ -59,7 +59,7 @@ class _MapWindowState extends State<MapWindow> {
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height / 3,
               child: GoogleMap(
-                initialCameraPosition: CameraPosition(
+                initialCameraPosition: const CameraPosition(
                   target: LatLng(49.8951, -97.1384), // Winnipeg coordinates
                   zoom: 10,
                 ),

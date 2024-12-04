@@ -24,7 +24,7 @@ class PostService {
     const url = '${ENV.API_AUTH_URL}/api/posts/search';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
-    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
     print('Searching with filters...');
 
     List<Post> posts = (

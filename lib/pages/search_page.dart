@@ -98,7 +98,7 @@ class SearchPageState extends State<SearchPage> {
 
     // Call the service to fetch posts with filters
     Future<List<Post>> filteredPostsFuture = PostService().fetchPostsByFilters(
-      new Searchfilter(
+      Searchfilter(
         originLat: origin!.latitude,
         originLng: origin!.longitude,
         destinationLat: destination!.latitude,
@@ -154,7 +154,7 @@ class SearchPageState extends State<SearchPage> {
                         onPressed: () => _selectDate(context),
                       ),
                       border: const OutlineInputBorder(),
-                      focusedBorder: OutlineInputBorder(
+                      focusedBorder: const OutlineInputBorder(
                         borderSide: BorderSide(color: notYellow, width: 3.0),
                       ),
                     ),
