@@ -54,8 +54,6 @@ class Post {
     );
   }
 
-  // get origin => null;
-
   /// Returns DateTime object parsed from passed string, current DateTime if string passed is null or an error happens
   static DateTime parseDate(String? dateTimeStr) {
     // Example of dateTimeStr

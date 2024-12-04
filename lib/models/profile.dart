@@ -1,10 +1,3 @@
-//this is just a dso
-
-//holds the fields and reresents data structure for the profile/person entity
-// includes some validation logic
-// does not contain business logic or API calls
-
-//if UI wants to validate, we can call the validate methods and use them as callbacks from Screens.
 class Profile {
   final String name;
   final String email;

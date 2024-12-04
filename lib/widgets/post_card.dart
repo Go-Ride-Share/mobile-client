@@ -8,6 +8,7 @@ import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
 import 'package:go_ride_sharing/pages/post_form_page.dart';
 import 'package:go_ride_sharing/theme.dart';
+import 'package:go_ride_sharing/pages/post_detail_page.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
@@ -21,7 +22,7 @@ class PostCard extends StatelessWidget {
       onTap: () {
         Navigator.push(
           context,
-          MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
+          MaterialPageRoute(builder: (context) => PostDetailPage(post: post)),
         );
       },
       child: Card(
