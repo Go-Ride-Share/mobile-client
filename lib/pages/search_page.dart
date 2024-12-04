@@ -239,12 +239,6 @@ class SearchPageState extends State<SearchPage> {
                     shadowColor: notBlack),
                     onPressed: () {
                       Navigator.pop(context); // Close the modal
-                      // print out all the values
-                      print('Departure Date: ${_departureDateController.text}');
-                      print('Price: ${_priceController.text}');
-                      print('Seats Available: ${_seatsAvailableController.text}');
-                      print('Origin: $origin');
-                      print('Destination: $destination');
                       _searchWithFilters();
                     },
                     child: const Text('Search'),
