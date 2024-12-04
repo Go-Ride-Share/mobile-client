@@ -16,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // Set to store selected filters
-  Set<FilterType> _selectedFilters = {FilterType.today};
+  final Set<FilterType> _selectedFilters = {FilterType.today};
 
   // Method to update selected filters
   void _updateFilter(FilterType filter) {
