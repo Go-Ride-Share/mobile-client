@@ -28,6 +28,7 @@ class PostCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.0),
           side: BorderSide(color: notYellow, width: 2.0),
         ),
+        elevation: 5.0,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(

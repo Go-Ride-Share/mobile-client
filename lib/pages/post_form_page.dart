@@ -35,15 +35,6 @@ class _PostFormPageState extends State<PostFormPage> {
   @override
   void initState() {
     super.initState();
-    // If a post is passed, populate the form fields with its data << WHICH WILL NOT HAPPEN
-    // if (widget.post != null) {
-    //   _postNameController.text = widget.post!.postName;
-    //   _postDescriptionController.text = widget.post!.description;
-    //   _seatsAvailableController.text = widget.post!.seatsAvailable.toString();
-    //   _departureDateController.text =
-    //       widget.post!.departureDate.toLocal().toString().split(' ')[0];
-    //   _priceController.text = widget.post!.price.toString();
-    // }
   }
 
   @override
@@ -89,15 +80,7 @@ class _PostFormPageState extends State<PostFormPage> {
         price: double.parse(_priceController.text),
       );
 
-      // TODO: POTENTIALLY USELESS CODE, might need to rethink how Post Update works
-      // Create or update the post based on whether a post was passed
-      // if (widget.post == null) {
-      //   await PostService().createPost(post);
-      // } else {
-      //   await PostService().updatePost(post);
-      // }
       await PostService().createPost(post);
-      // Navigator.pushNamed(context, '/profile');
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => ProfilePage()),
