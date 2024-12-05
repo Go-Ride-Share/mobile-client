@@ -125,15 +125,20 @@ class PostService {
   }
 
   Future<List<Post>> fetchAllPosts() async {
+    String? userID = await this.userID;
+
     const url = '${ENV.API_AUTH_URL}/api/Posts';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
-    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
 
     List<Post> posts = (
       await sendGetRequestAndGetAsList(convertJsonToPostList, url, headers)
     ).cast<Post>();
 
+    //filter out my own posts
+    posts = posts.where((post) => post.posterId != userID).toList();
+    
     return posts;
   }
 
