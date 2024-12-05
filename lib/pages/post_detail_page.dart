@@ -76,7 +76,7 @@ class PostDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Departure Date: ${post.departureDate}',
+              'Departure Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
               style: const TextStyle(fontSize: 16.0),
             ),
             const SizedBox(height: 8),
