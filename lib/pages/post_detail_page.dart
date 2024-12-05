@@ -17,8 +17,8 @@ class PostDetailPage extends StatelessWidget {
   //but when clicked from search page, it does appear.
   PostDetailPage({super.key, required this.post}) {
     markers = {
-      MarkerId('Origin'): Marker(
-        markerId: MarkerId('Origin'),
+      const MarkerId('Origin'): Marker(
+        markerId: const MarkerId('Origin'),
         position: LatLng(post.originLat, post.originLng),
         infoWindow: InfoWindow(
           title: 'Origin',
@@ -26,8 +26,8 @@ class PostDetailPage extends StatelessWidget {
         ),
         icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor.hueGreen),
       ),
-      MarkerId('Destination'): Marker(
-        markerId: MarkerId('Destination'),
+      const MarkerId('Destination'): Marker(
+        markerId: const MarkerId('Destination'),
         position: LatLng(post.destinationLat, post.destinationLng),
         infoWindow: InfoWindow(
           title: 'Destination',
@@ -54,7 +54,43 @@ class PostDetailPage extends StatelessWidget {
                 fontSize: 20.0,
               ),
             ),
+            const SizedBox(height: 8),
+            Text(
+              post.description,
+              style: const TextStyle(fontSize: 16.0),
+            ),
             const SizedBox(height: 16),
+            Text(
+              'Origin: ${post.originName}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Destination: ${post.destinationName}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Seats Available: ${post.seatsAvailable}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Departure Date: ${post.departureDate}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              'Price: \$${post.price}',
+              style: const TextStyle(fontSize: 16.0),
+            ),
+            const SizedBox(height: 8),
+            if (post.posterName != null)
+              Text(
+              'Posted by: ${post.posterName}',
+              style: const TextStyle(fontSize: 16.0),
+              ),
+            const SizedBox(height: 8),
             MapWindow(markers: markers),
             const SizedBox(height: 10.0),
         FutureBuilder<String?>(
