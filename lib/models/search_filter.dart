@@ -37,7 +37,7 @@ class Searchfilter {
       'originLng': originLng,
       'destinationLat': destinationLat,
       'destinationLng': destinationLng,
-      'seatsAvailable': seatsAvailable,
+      'numSeats': seatsAvailable,
       'departureDate': departureDate?.toUtc().toIso8601String(),
       'price': price,
     };
