@@ -31,6 +31,7 @@ class PostService {
       await sendPostRequestAndGetAsObject(convertJsonToPostList, url, headers, jsonEncode(filters.toJson()))
     ).cast<Post>();
 
+    posts = posts.where((post) => post.posterId != userID).toList();
     return posts;
   }
 
