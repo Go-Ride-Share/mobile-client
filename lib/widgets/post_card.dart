@@ -15,7 +15,6 @@ class PostCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: ON TAP, NAVIGATE TO POST DETAILS PAGE (something that shows more details with user details and map view)
     return GestureDetector(
       onTap: () {
         Navigator.push(

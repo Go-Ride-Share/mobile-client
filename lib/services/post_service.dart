@@ -71,10 +71,6 @@ class PostService {
     final url = Uri.parse('${ENV.API_BASE_URL}/api/posts');
 
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
- 
-    print('Asits Post Data: $postData');
-    print('Asits Headers: $headers');
-    print('Asits URL: $url');
 
     try {
       final response = await http.post(url, headers: headers, body: postData);
