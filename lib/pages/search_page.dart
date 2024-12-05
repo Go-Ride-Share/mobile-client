@@ -91,7 +91,20 @@ class SearchPageState extends State<SearchPage> {
 
   void _searchWithFilters() {
     if (validateMarkers(markers)) {
+
+      // Necessary because we allow empty date field for Search filtering. 
+      // and Dart's DateTime.parse() throws exception on empty strings
       final departureDate = _departureDateController.text;
+      
+      DateTime? parsedDepartureDate;
+      if (departureDate.isNotEmpty) {
+        try {
+          parsedDepartureDate = DateTime.parse(departureDate).toUtc();
+        } catch (e) {
+          print('Error parsing date: $e');
+        }
+      }
+
       final price = double.tryParse(_priceController.text) ?? 0.0;
       final seatsAvailable = int.tryParse(_seatsAvailableController.text) ?? 0;
 
@@ -103,16 +116,10 @@ class SearchPageState extends State<SearchPage> {
         destinationLat: destination!.latitude,
         destinationLng: destination!.longitude,
         seatsAvailable: seatsAvailable,
-        departureDate: DateTime.parse(departureDate).toUtc(),
+        departureDate: parsedDepartureDate,
         price: price,
       ));
 
-      // print('Searching with filters...');
-      // _postsFuture?.then((posts) {
-      //   for (var post in posts) {
-      //   print('Post: $post');
-      //   }
-      // });
       setState(() {
         _postsFuture = filteredPostsFuture;
       });
@@ -243,8 +250,8 @@ class SearchPageState extends State<SearchPage> {
                         ),
                         shadowColor: notBlack),
                     onPressed: () {
-                      _searchWithFilters();
                       Navigator.pop(context); // Close the modal
+                      _searchWithFilters();
                     },
                     child: const Text('Search'),
                   ),
