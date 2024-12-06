@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/widgets/trip_details.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/models/post.dart';
-import 'package:go_ride_sharing/services/message_service.dart';
-import 'package:go_ride_sharing/services/post_service.dart';
-import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
 import 'package:go_ride_sharing/widgets/map_window.dart';
 import 'package:go_ride_sharing/theme.dart';
 
@@ -64,40 +60,6 @@ class PostDetailPage extends StatelessWidget {
             ),
             const SizedBox(height: 10),
             MapWindow(markers: markers),
-            const SizedBox(height: 10),
-            FutureBuilder<String?>(
-              future: PostService().userID,
-              builder: (context, snapshot) {
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (snapshot.hasData && snapshot.data != post.posterId) {
-                  return ElevatedButton(
-                    onPressed: () async {
-                      Conversation conversation = await MessageService()
-                          .createConversation(post.posterId);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ConversationDetailPage(
-                              conversation: conversation),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(vertical: 16),
-                      backgroundColor: notYellow,
-                      foregroundColor: notBlack,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10),
-                      ),
-                    ),
-                    child: const Text('Contact'),
-                  );
-                } else {
-                  return const SizedBox.shrink();
-                }
-              },
-            ),
           ],
         ),
       ),
