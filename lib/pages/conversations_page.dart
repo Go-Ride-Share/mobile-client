@@ -4,6 +4,8 @@ import 'package:go_ride_sharing/models/conversation.dart';
 import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
 
 class ConversationsPage extends StatefulWidget {
+  const ConversationsPage({super.key});
+
   @override
   _ConversationsPageState createState() => _ConversationsPageState();
 }
@@ -21,7 +23,7 @@ class _ConversationsPageState extends State<ConversationsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('All Conversations'),
+        title: const Text('All Conversations'),
       ),
       body: FutureBuilder<List<Conversation>>(
         future: _conversations,
@@ -63,17 +65,17 @@ class ConversationPreview extends StatelessWidget {
   final Conversation conversation;
   final VoidCallback onTap;
 
-  ConversationPreview({required this.conversation, required this.onTap});
+  const ConversationPreview({super.key, required this.conversation, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       title: Text(
         conversation.conversationPartner ?? 'Unknown Partner',
-        style: TextStyle(fontWeight: FontWeight.bold),
+        style: const TextStyle(fontWeight: FontWeight.bold),
       ),
       subtitle: Text(conversation.lastMessage),
-      trailing: Icon(Icons.arrow_forward_ios), // Added arrow icon here
+      trailing: const Icon(Icons.arrow_forward_ios), // Added arrow icon here
       onTap: onTap,
     );
   }

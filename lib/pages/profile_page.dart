@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_ride_sharing/theme.dart';
 import 'package:go_ride_sharing/widgets/filter_button.dart';
 import 'package:go_ride_sharing/services/post_service.dart';
 import 'package:go_ride_sharing/widgets/post_card.dart';
@@ -15,7 +16,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   // Set to store selected filters
-  Set<FilterType> _selectedFilters = {FilterType.today};
+  final Set<FilterType> _selectedFilters = {FilterType.today};
 
   // Method to update selected filters
   void _updateFilter(FilterType filter) {
@@ -31,21 +32,23 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: const CustomAppBar(),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Padding(
+      appBar: AppBar(
+        title: const Text('My Posts'),
+        bottom: PreferredSize(
+          preferredSize: const Size.fromHeight(30.0),
+          child: Padding(
             padding: const EdgeInsets.all(16.0),
             child: FilterButtonRow(
               selectedFilters: _selectedFilters,
               onFilterChanged: _updateFilter,
             ),
           ),
-          Expanded(
+        ),
+      ),
+      body: Center(
+        child: Expanded(
             child: PostList(filters: _selectedFilters),
           ),
-        ],
       ),
     );
   }
@@ -70,7 +73,8 @@ class PostList extends StatelessWidget {
         } else {
           final now = DateTime.now();
           final filteredPosts = snapshot.data!.where((post) {
-            final departureDate = DateTime(post.departureDate.year, post.departureDate.month, post.departureDate.day);
+            final departureDate = DateTime(post.departureDate.year,
+                post.departureDate.month, post.departureDate.day);
             final today = DateTime(now.year, now.month, now.day);
             return filters.any((filter) {
               switch (filter) {
@@ -86,7 +90,10 @@ class PostList extends StatelessWidget {
           return ListView.builder(
             itemCount: filteredPosts.length,
             itemBuilder: (context, index) {
-              return PostCard(post: filteredPosts[index]);
+              return Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
+                  child: PostCard(post: filteredPosts[index]),
+              );
             },
           );
         }
@@ -128,78 +135,6 @@ class FilterButtonRow extends StatelessWidget {
           isSelected: selectedFilters.contains(FilterType.past),
         ),
       ],
-    );
-  }
-}
-
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return PreferredSize(
-      preferredSize: const Size.fromHeight(1.0),
-      child: AppBar(
-        flexibleSpace: const Padding(
-          padding: EdgeInsets.all(16.0),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  WelcomeHeader(),
-                  Subtitle(),
-                ],
-              ),
-              CircleAvatar(
-                radius: 35,
-                backgroundImage: AssetImage('assets/images/profile_image.png'),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  @override
-  Size get preferredSize => const Size.fromHeight(100.0);
-}
-
-class WelcomeHeader extends StatelessWidget {
-  const WelcomeHeader({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Container(
-      child: RichText(
-        text: const TextSpan(
-          children: [
-            TextSpan(
-              text: 'Welcome back, '
-            ),
-            TextSpan(
-              text: 'John!',
-            ),
-          ],
-          style: TextStyle(fontSize: 30, color: Colors.black),
-        ),
-      ),
-    );
-  }
-}
-
-class Subtitle extends StatelessWidget {
-  const Subtitle({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return const Text(
-      'See all your trips',
-      style: TextStyle(fontSize: 20),
     );
   }
 }

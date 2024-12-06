@@ -22,7 +22,7 @@ class MessageService {
   Future<List<Conversation>> getAllConversations() async {
 
     // Create http request data
-    const String uri = '${ENV.API_BASE_URL}/api/GetAllConversations';
+    const String uri = '${ENV.API_BASE_URL}/api/Conversations';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
     // Make the request and parse the data
@@ -36,7 +36,7 @@ class MessageService {
   Future<List<Message>> getMessagesForConversation(String conversationId) async {
 
     // Create http request data
-    final String uri = '${ENV.API_BASE_URL}/api/PollConversation?conversationId=$conversationId';
+    final String uri = '${ENV.API_BASE_URL}/api/Messages/$conversationId';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
     List<Message> messages = (
@@ -56,7 +56,7 @@ class MessageService {
     }
     // Conversation doea not exist yet, create one
     // Create http request data
-    const String uri = '${ENV.API_BASE_URL}/api/CreateConversation';
+    const String uri = '${ENV.API_BASE_URL}/api/Conversations';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
     final body = {
       'userId': posterId ?? '',
@@ -71,7 +71,7 @@ class MessageService {
   Future<List<Message>> pollMessages(String conversationId, DateTime timeStamp) async {
 
     // Create http request data
-    final String uri = '${ENV.API_BASE_URL}/api/PollConversation?conversationId=$conversationId&timeStamp=$timeStamp';
+    final String uri = '${ENV.API_BASE_URL}/api/Messages/$conversationId?timeStamp=$timeStamp';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
     List<Message> messages = (
@@ -83,7 +83,7 @@ class MessageService {
 
   Future<void> postMessage(String conversationId, Message message) async {
     // Create http request data
-    const String uri = '${ENV.API_BASE_URL}/api/PostMessage';
+    const String uri = '${ENV.API_BASE_URL}/api/Messages';
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
     final body = {
       'conversationId': conversationId,

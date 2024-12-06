@@ -1,29 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:go_ride_sharing/models/post.dart';
-import 'package:go_ride_sharing/services/post_service.dart';
-import 'package:go_ride_sharing/services/message_service.dart';
-import 'package:go_ride_sharing/models/conversation.dart';
-import 'package:go_ride_sharing/pages/conversation_detail_page.dart';
+import 'package:go_ride_sharing/theme.dart';
+import 'package:go_ride_sharing/pages/post_detail_page.dart';
+import 'package:go_ride_sharing/widgets/trip_details.dart';
 
 class PostCard extends StatelessWidget {
   final Post post;
 
-  const PostCard({Key? key, required this.post}) : super(key: key);
+  const PostCard({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      // onTap: () {
-      //   // Navigator.push(
-      //   //   context,
-      //   //   MaterialPageRoute(builder: (context) => PostFormPage(post: post)),
-      //   // );
-      // },
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => PostDetailPage(post: post)),
+        );
+      },
       child: Card(
-        color: Color(0xFFFFF9C4), // Light shade of yellow
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10.0),
+          side: BorderSide(color: notYellow, width: 2.0),
         ),
+        elevation: 5.0,
         child: Padding(
           padding: const EdgeInsets.all(10.0),
           child: Column(
@@ -43,7 +43,7 @@ class PostCard extends StatelessWidget {
 class PostInformation extends StatelessWidget {
   final Post post;
 
-  const PostInformation({Key? key, required this.post}) : super(key: key);
+  PostInformation({super.key, required this.post});
 
   @override
   Widget build(BuildContext context) {
@@ -54,113 +54,31 @@ class PostInformation extends StatelessWidget {
           radius: 30.0,
         ),
         SizedBox(width: 10.0),
-        Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              post.postName,
-              style: TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 16.0,
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                post.postName,
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                  fontSize: 16.0,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-            SizedBox(height: 5.0),
-            Text(
-              post.description,
-              style: TextStyle(
-                fontSize: 14.0,
+              SizedBox(height: 5.0),
+              Text(
+                post.description,
+                style: TextStyle(
+                  fontSize: 14.0,
+                ),
+                overflow: TextOverflow.ellipsis,
               ),
-            ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class TripDetails extends StatelessWidget {
-  final Post post;
-
-  const TripDetails({Key? key, required this.post}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              '${post.seatsAvailable} seats',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 5.0),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Text(
-              'Date: ${post.departureDate.toLocal().toString().split(' ')[0]}',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-            Text(
-              'Time: ${post.departureDate.toLocal().toString().split(' ')[1].substring(0, 5)}',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-            Text(
-              '\$${post.price.toStringAsFixed(2)}',
-              style: TextStyle(
-                fontSize: 14.0,
-              ),
-            ),
-          ],
-        ),
-        SizedBox(height: 5.0),
-        Text(
-          '(${post.startLatitude}, ${post.startLongitude}) to (${post.destinationLatitude}, ${post.destinationLongitude})',
-          style: TextStyle(
-            fontSize: 14.0,
+            ],
           ),
         ),
-        SizedBox(height: 10.0),
-        FutureBuilder<String?>(
-          future: PostService().userID,
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return CircularProgressIndicator();
-            } else if (snapshot.hasData && snapshot.data != post.posterId) {
-              return ElevatedButton(
-                onPressed: () async {
-                  Conversation conversation = await MessageService().createConversation(post.posterId);
-                  Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                      builder: (context) => ConversationDetailPage(conversation: conversation),
-                    ),
-                  );
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.yellow,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10.0),
-                  ),
-                ),
-                child: Text('Contact'),
-              );
-            } else {
-              return SizedBox.shrink();
-            }
-          },
-        ),
       ],
     );
   }
 }
+

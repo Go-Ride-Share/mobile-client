@@ -4,9 +4,9 @@ import 'package:http/http.dart' as http;
   Map<String, String> getHeaders(String? authorizationToken, String? dbAccessToken, String? userID) {
     final headers = {
       'Content-Type': 'application/json',
-      'Authorization': 'Bearer ${authorizationToken ?? ''}',
-      'X-Db-Token': dbAccessToken ?? '',
       'X-User-ID': userID ?? '',
+      'X-Db-Token': dbAccessToken ?? '',
+      'Authorization': 'Bearer ${authorizationToken ?? ''}',
     };
 
     return headers;

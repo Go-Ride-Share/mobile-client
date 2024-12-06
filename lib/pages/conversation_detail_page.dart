@@ -10,7 +10,7 @@ import 'package:go_ride_sharing/models/message.dart';
 class ConversationDetailPage extends StatefulWidget {
   final Conversation conversation;
 
-  ConversationDetailPage({
+  const ConversationDetailPage({super.key, 
       required this.conversation
     });
 
@@ -31,7 +31,7 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
     super.initState();
     _loadUserId();
     _fetchMessages();
-    _timer = Timer.periodic(Duration(seconds: 5), (timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (timer) {
       _pollMessages();
     });
   }
@@ -148,7 +148,7 @@ class _ConversationDetailPageState extends State<ConversationDetailPage> {
                   ),
                 ),
                 IconButton(
-                  icon: Icon(Icons.send),
+                  icon: const Icon(Icons.send),
                   onPressed: _sendMessage,
                 ),
               ],
@@ -164,7 +164,7 @@ class MessageBubble extends StatelessWidget {
   final Message message;
   final Alignment alignment;
 
-  MessageBubble({required this.message, required this.alignment});
+  const MessageBubble({super.key, required this.message, required this.alignment});
 
   @override
   Widget build(BuildContext context) {
@@ -174,10 +174,10 @@ class MessageBubble extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: Container(
-        margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-        padding: EdgeInsets.all(10),
+        margin: const EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+        padding: const EdgeInsets.all(10),
         decoration: BoxDecoration(
-          color: Color(0xffeec232), // Updated color
+          color: const Color(0xffeec232), // Updated color
           borderRadius: BorderRadius.circular(10),
         ),
         child: Column(
@@ -185,13 +185,13 @@ class MessageBubble extends StatelessWidget {
           children: [
             Text(
               message.contents,
-              style: TextStyle(fontSize: 16),
+              style: const TextStyle(fontSize: 16),
               textAlign: textAlign,
             ),
-            SizedBox(height: 5),
+            const SizedBox(height: 5),
             Text(
               message.timestamp.toString(),
-              style: TextStyle(fontSize: 12, color: Colors.grey),
+              style: const TextStyle(fontSize: 12, color: Colors.grey),
               textAlign: textAlign,
             ),
           ],
