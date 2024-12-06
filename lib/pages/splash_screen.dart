@@ -5,7 +5,7 @@ import '../theme.dart';
 class SplashScreen extends StatefulWidget {
   final Future<bool> Function() checkToken;
 
-  const SplashScreen(this.checkToken, {Key? key}) : super(key: key);
+  const SplashScreen(this.checkToken, {super.key});
 
   @override
   SplashScreenState createState() => SplashScreenState();

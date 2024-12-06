@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_ride_sharing/theme.dart';
 import '../services/auth_service.dart';
 import '../services/validation_service.dart';
 
@@ -53,11 +54,18 @@ class SignInPageState extends State<SignInPage> {
             else
               const SizedBox(height: 20),
             ElevatedButton(
+              style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
               onPressed: () async {
                 if(_formKey.currentState!.validate()) {
                   final String response = await AuthService.signIn(_emailController.text, _passwordController.text);
                   if (response == AuthService.RESPONSE_MSG["SUCCESS"]) {
-                    Navigator.pushNamed(context, '/home');
+                    Navigator.pushReplacementNamed(context, '/home');
                   } else {
                     if (mounted) {
                         setState(() {
@@ -72,6 +80,13 @@ class SignInPageState extends State<SignInPage> {
             ),
             const SizedBox(height: 20),
             ElevatedButton(
+                style: FilledButton.styleFrom(
+                    backgroundColor: notYellow,
+                    foregroundColor: notBlack,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                    shadowColor: notBlack),
                 onPressed: () {
                 Navigator.pushNamed(context, '/sign_up_page');
                 },

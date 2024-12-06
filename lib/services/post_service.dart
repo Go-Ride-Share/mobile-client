@@ -4,7 +4,7 @@ import 'dart:convert';
 import 'caching_service.dart';
 import '../constants.dart';
 import 'package:go_ride_sharing/utils.dart';
-
+import '../models/search_filter.dart';
 class PostService {
   CachingService cache = CachingService();
 
@@ -18,10 +18,27 @@ class PostService {
     userID = cache.getData(ENV.CACHE_USER_ID_KEY);
   }
 
+  Future<List<Post>> fetchPostsByFilters(Searchfilter filters) async {
+    String? userID = await this.userID;
+
+    const url = '${ENV.API_AUTH_URL}/api/posts/search';
+    // logic token and db token can be null values if they are expired.
+    // We are ignoring the case of having to sign in again.
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
+    print('Searching with filters...');
+
+    List<Post> posts = (
+      await sendPostRequestAndGetAsObject(convertJsonToPostList, url, headers, jsonEncode(filters.toJson()))
+    ).cast<Post>();
+
+    posts = posts.where((post) => post.posterId != userID).toList();
+    return posts;
+  }
+
   Future<List<Post>> fetchProfilePosts() async {
     final userId = await userID;
 
-    final url = '${ENV.API_BASE_URL}/api/GetPosts?userId=$userId';
+    final url = '${ENV.API_BASE_URL}/api/Posts/$userId';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
@@ -34,29 +51,31 @@ class PostService {
   }
 
   Future<void> createPost(Post post) async {
+    String? userID = await this.userID;
+    
     final postData = jsonEncode({
-      'posterId': 'hardcodedDummyValue',
-      'originLat': post.startLatitude,
-      'originLng': post.startLongitude,
-      'destinationLat': post.destinationLatitude,
-      'destinationLng': post.destinationLongitude,
+      'posterId': userID,
+      'name': post.postName,
+      'originLat': post.originLat,
+      'originLng': post.originLng,
+      'destinationLat': post.destinationLat,
+      'destinationLng': post.destinationLng,
+      'originName': post.originName,
+      'destinationName': post.destinationName,
       'description': post.description,
       'seatsAvailable': post.seatsAvailable,
-      'name': post.postName,
       'departureDate': post.departureDate.toIso8601String(),
       'price': post.price,
     });
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
+    final url = Uri.parse('${ENV.API_BASE_URL}/api/posts');
 
-    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
- 
-    // print('Post Data: $postData');
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
 
     try {
       final response = await http.post(url, headers: headers, body: postData);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Post created successfully');
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
@@ -70,10 +89,12 @@ class PostService {
     final postData = jsonEncode({
       'posterId': 'hardcodedDummyValue',
       'postId': post.postId,
-      'originLat': post.startLatitude,
-      'originLng': post.startLongitude,
-      'destinationLat': post.destinationLatitude,
-      'destinationLng': post.destinationLongitude,
+      'originLat': post.originLat,
+      'originLng': post.originLng,
+      'destinationLat': post.destinationLat,
+      'destinationLng': post.destinationLng,
+      'originName': post.originName,
+      'destinationName': post.destinationName,
       'description': post.description,
       'seatsAvailable': post.seatsAvailable,
       'name': post.postName,
@@ -81,7 +102,7 @@ class PostService {
       'price': post.price,
     });
 
-    final url = Uri.parse('${ENV.API_BASE_URL}/api/SavePost?userId=${await userID}');
+    final url = Uri.parse('${ENV.API_BASE_URL}/api/Posts/${await userID}');
 
     final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
 
@@ -90,7 +111,7 @@ class PostService {
     try {
       final response = await http.post(url, headers: headers, body: postData);
 
-      if (response.statusCode == 201) {
+      if (response.statusCode == 200) {
         print('Post created successfully');
       } else {
         print('Error: ${response.statusCode}, ${response.body}');
@@ -101,15 +122,20 @@ class PostService {
   }
 
   Future<List<Post>> fetchAllPosts() async {
-    const url = '${ENV.API_AUTH_URL}/api/getAllPosts';
+    String? userID = await this.userID;
+
+    const url = '${ENV.API_AUTH_URL}/api/Posts';
     // logic token and db token can be null values if they are expired.
     // We are ignoring the case of having to sign in again.
-    final headers = getHeaders(await baseAccessToken, await dbAccessToken, await userID);
+    final headers = getHeaders(await baseAccessToken, await dbAccessToken, userID);
 
     List<Post> posts = (
       await sendGetRequestAndGetAsList(convertJsonToPostList, url, headers)
     ).cast<Post>();
 
+    //filter out my own posts
+    posts = posts.where((post) => post.posterId != userID).toList();
+    
     return posts;
   }
 
